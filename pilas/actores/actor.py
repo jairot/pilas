@@ -64,7 +64,8 @@ class Actor(object, Estudiante):
         Estudiante.__init__(self)
         self._actor = pilas.mundo.motor.obtener_actor(imagen, x=x, y=y)
         self.centro = ('centro', 'centro')
-
+        
+        self.id = ""
         self.x = x
         self.y = y
         self.transparencia = 0

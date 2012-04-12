@@ -1,6 +1,6 @@
 import pilas
 from pilas.escenas import Normal
-from pilas.net.actor import PilasNetworkObject
+from pilas.actores.actor import Actor
 
 from PodSixNet.Server import Server
 from PodSixNet.Channel import Channel
@@ -8,6 +8,9 @@ from PodSixNet.Connection import connection, ConnectionListener
 
 from weakref import WeakKeyDictionary
 
+import random
+
+from pilas.actores import *
 import uuid
 
 class ClientChannel(Channel):
@@ -22,6 +25,7 @@ class ClientChannel(Channel):
             
     def Network_crear_actor(self, data):
         self._server.enviar_al_resto(data, self)
+        self._server.actores.append({"clase" : data['clase'], "id" : data['id'], "cliente" : self.addr})
 
     def Close(self):
         pass
@@ -32,7 +36,15 @@ class EscucharServidor(ConnectionListener):
         pass
     
     def Network_crear_actor(self, data):
-        pilas.net.actor.ActorNet()
+        clase_actor = eval(data['clase'])
+        actor = clase_actor()
+        actor.id = data['id']
+        actor.x = random.randint(-320,320)
+        actor.y = random.randint(-240,240)
+        actor.decir(data['id'])
+        #print eval(data['clase'])
+        
+        #pilas.actores.actor.Actor()
     
 
 class EscenaServidor(Normal, Server):
@@ -45,6 +57,7 @@ class EscenaServidor(Normal, Server):
         print "Servidor iniciado en el pueto :" , puerto_servidor
         self._clientes = WeakKeyDictionary()
         pilas.eventos.actualizar.conectar(self.actualizar)
+        self.actores = []
 
     def iniciar(self):
         pass
@@ -62,12 +75,15 @@ class EscenaServidor(Normal, Server):
     def Connected(self, channel, addr):
         print "Cliente agregado"
         self.agregar_Cliente(channel)
+        for actor in self.actores:
+            #print actor
+            channel.Send({"action": "crear_actor", "clase" : actor['clase'], "id" : actor['id']})
     
     def agregar_Cliente(self, cliente):
         print "Nuevo Cliente " + str(cliente.addr)
         self._clientes[cliente] = True
         #self.SendPlayers()
-        print "clientes", [p for p in self._clientes]        
+        #print "clientes", [p for p in self._clientes]        
     
     def eliminar_Cliente(self, cliente):
         print "Eliminando Cliente " + str(cliente.addr)
@@ -91,12 +107,14 @@ class EscenaCliente(Normal, EscucharServidor):
         Normal.__init__(self)
         self.Connect((ip_servidor, puerto_servidor))
         pilas.eventos.actualizar.conectar(self.actualizar)
+        self._actores_compartidos = []
     
     def actualizar(self, evento):
-        if (len(pilas.actores.todos) > 0):
-            for actor in pilas.actores.todos:
-                if (isinstance(actor, PilasNetworkObject) and actor.id == ""):
-                    actor.id = '0'
-                    connection.Send({"action": "crear_actor", "data" : actor.__class__.__name__})
+        if (len(self._actores_compartidos) > 0):
+            for actor in self._actores_compartidos:
+                if (isinstance(actor, Actor) and actor.id == ""):
+                    actor.id = str(uuid.uuid4())
+                    print actor.id
+                    connection.Send({"action": "crear_actor", "clase" : actor.__class__.__name__ , "id" : actor.id})
         connection.Pump()
         self.Pump()                 

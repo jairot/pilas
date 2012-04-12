@@ -1,16 +1,7 @@
 import pilas
 from pilas.escenas import Normal
-from pilas.actores import Aceituna
-from pilas.net.actor import PilasNetworkObject
+from pilas.actores import Mono
 
-# Permite que este ejemplo funcion incluso si no has instalado pilas.
-import sys
-sys.path.insert(0, "..")
-
-class AceitunaNet(Aceituna, PilasNetworkObject):
-    def __init__(self, x=0, y=0):
-        Aceituna.__init__(self,x,y)
-        PilasNetworkObject.__init__(self)
 
 class Escena_Parametros(Normal):
     
@@ -31,9 +22,10 @@ class Escena_Cliente(pilas.net.EscenaCliente):
         pilas.eventos.click_de_mouse.conectar(self.crear_actor)
 
     def crear_actor(self, event):
-        actor = AceitunaNet()
+        actor = Mono()
         actor.x = event.x
         actor.y = event.y
+        self._actores_compartidos.append(actor)
         
     def actualizar(self, evento):
         pilas.net.EscenaCliente.actualizar(self, evento)
