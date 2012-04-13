@@ -35,6 +35,9 @@ class ClientChannel(Channel):
         self._server.enviar_al_resto(data, self)
         self._server.actores.append({"clase" : data['clase'], "id" : data['id'], "cliente" : self.addr})
 
+    def Network_mover_actor(self, data):
+        self._server.enviar_al_resto(data, self)
+
     def Close(self):
         pass
     
@@ -50,10 +53,9 @@ class EscucharServidor(ConnectionListener):
         actor.x = random.randint(-320,320)
         actor.y = random.randint(-240,240)
         actor.decir(data['id'])
-        #print eval(data['clase'])
-        
-        #pilas.actores.actor.Actor()
     
+    def Network_mover_actor(self, data):
+        print data
 
 class EscenaServidor(Normal, Server):
 
@@ -116,7 +118,14 @@ class EscenaCliente(Normal, EscucharServidor):
         self.Connect((ip_servidor, puerto_servidor))
         pilas.eventos.actualizar.conectar(self.actualizar)
         self._actores_compartidos = []
-    
+        
+    def agregarActorObservado(self, actor):
+        actor.conectarObservador(self)
+        self._actores_compartidos.append(actor)
+        
+    def cambioEnActor(self, event):
+        connection.Send({"action": "mover_actor", "x" : event['x'] , "id" : event['id']})
+             
     def actualizar(self, evento):
         if (len(self._actores_compartidos) > 0):
             for actor in self._actores_compartidos:
@@ -125,4 +134,5 @@ class EscenaCliente(Normal, EscucharServidor):
                     print actor.id
                     connection.Send({"action": "crear_actor", "clase" : actor.__class__.__name__ , "id" : actor.id})
         connection.Pump()
-        self.Pump()                 
+        self.Pump()
+        

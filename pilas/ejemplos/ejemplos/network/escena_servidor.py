@@ -1,9 +1,11 @@
-import pilas
-from pilas.escenas import Normal
-
 # Permite que este ejemplo funcion incluso si no has instalado pilas.
 import sys
 sys.path.insert(0, "..")
+
+import pilas
+from pilas.escenas import Normal
+
+
 
 
 class Escena_Servidor(pilas.net.EscenaServidor):

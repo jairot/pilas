@@ -1,6 +1,6 @@
 import pilas
 from pilas.escenas import Normal
-from pilas.actores import Mono
+from pilas.actores import *
 
 
 class Escena_Parametros(Normal):
@@ -22,10 +22,11 @@ class Escena_Cliente(pilas.net.EscenaCliente):
         pilas.eventos.click_de_mouse.conectar(self.crear_actor)
 
     def crear_actor(self, event):
-        actor = Mono()
+        actor = Aceituna()
         actor.x = event.x
         actor.y = event.y
-        self._actores_compartidos.append(actor)
+        actor.aprender(pilas.habilidades.MoverseConElTeclado)
+        self.agregarActorObservado(actor)
         
     def actualizar(self, evento):
         pilas.net.EscenaCliente.actualizar(self, evento)

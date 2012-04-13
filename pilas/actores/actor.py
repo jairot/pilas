@@ -65,7 +65,11 @@ class Actor(object, Estudiante):
         self._actor = pilas.mundo.motor.obtener_actor(imagen, x=x, y=y)
         self.centro = ('centro', 'centro')
         
-        self.id = ""
+        self.id = "" # ID para identificarlo por la red
+        
+        # Observadores
+        self.listeners = []
+
         self.x = x
         self.y = y
         self.transparencia = 0
@@ -77,7 +81,21 @@ class Actor(object, Estudiante):
         pilas.actores.utils.insertar_como_nuevo_actor(self)
         self._transparencia = 0
         self.anexados = []
-
+        
+ 
+    # Obervado
+    # -------------------------
+    def conectarObservador(self, listener):
+        self.listeners.append(listener)
+    
+    def desconectarObservador(self, listener):
+        self.listeners.remove(listener)
+    
+    def notificarObservadores(self):
+        for listener in self.listeners:            
+            listener.cambioEnActor({"id": self.id, "x" : self.x})
+    # -------------------------
+    
     def definir_centro(self, (x, y)):
         if type(x) == str:
             if x not in IZQUIERDA + CENTRO + DERECHA:
@@ -144,6 +162,7 @@ class Actor(object, Estudiante):
 
     @pilas.utils.interpolable
     def set_x(self, x):
+        self.notificarObservadores()
         self.definir_posicion(x, self.y)
 
     def get_z(self):
