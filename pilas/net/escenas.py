@@ -28,9 +28,6 @@ class ClientChannel(Channel):
     def __init__(self, *args, **kwargs):
         Channel.__init__(self, *args, **kwargs)
     
-    #def Network(data):
-    #    print data
-            
     def Network_crear_actor(self, data):
         self._server.enviar_al_resto(data, self)
         self._server.actores.append({"clase" : data['clase'], "id" : data['id'], "cliente" : self.addr})
@@ -50,32 +47,30 @@ class EscucharServidor(ConnectionListener):
         clase_actor = eval(data['clase'])
         actor = clase_actor()
         actor.id = data['id']
-        actor.x = random.randint(-320,320)
-        actor.y = random.randint(-240,240)
-        actor.decir(data['id'])
+        actor.x = data['x']
+        actor.y = data['y']
+        self._actores_ajenos.append(actor)
     
     def Network_mover_actor(self, data):
-        print data
+        for actor in self._actores_ajenos:
+            if (isinstance(actor, Actor) and actor.id == data['id']):
+                actor.x = data['x'] 
+                actor.y = data['y']
+                actor.escala_x = data['escala_x']
+                actor.escala_y = data['escala_y']
+                break
 
-class EscenaServidor(Normal, Server):
+class ServidorPilas(Server):
 
     channelClass = ClientChannel
     
     def __init__(self, puerto_servidor=31425):
-        Normal.__init__(self)
         Server.__init__(self, localaddr=("127.0.0.1", puerto_servidor))
         print "Servidor iniciado en el pueto :" , puerto_servidor
         self._clientes = WeakKeyDictionary()
-        pilas.eventos.actualizar.conectar(self.actualizar)
         self.actores = []
 
-    def iniciar(self):
-        pass
-
-    def terminar(self):
-        pass
-    
-    def actualizar(self, evento):
+    def actualizar(self):
         self.Pump()
         
     # ####################################################
@@ -86,7 +81,6 @@ class EscenaServidor(Normal, Server):
         print "Cliente agregado"
         self.agregar_Cliente(channel)
         for actor in self.actores:
-            #print actor
             channel.Send({"action": "crear_actor", "clase" : actor['clase'], "id" : actor['id']})
     
     def agregar_Cliente(self, cliente):
@@ -100,8 +94,9 @@ class EscenaServidor(Normal, Server):
         del self._clientes[cliente]
         #self.SendPlayers()
     
-    #def SendPlayers(self):
-    #    self.SendToAll({"action": "players", "players": [p.nickname for p in self.players]})
+    def SendPlayers(self):
+        self.SendToAll({"action": "players", "players": [p.nickname for p in self.players]})
+    
     def enviar_al_resto(self, data, cliente_excepcion):
         for c in self._clientes:
             if (c != cliente_excepcion):
@@ -111,28 +106,44 @@ class EscenaServidor(Normal, Server):
     def enviar_a_todos(self, data):
         [c.Send(data) for c in self._clientes]
     
-class EscenaCliente(Normal, EscucharServidor):
+class ActorObserver():
+    def cambioEnActor(self, event):
+        print "Debe implementar el metodo cambioEnActor para Observar los cambios de los actores."    
+
+class EscenaNetwork(Normal, EscucharServidor, ActorObserver):
     
-    def __init__(self, ip_servidor='127.0.0.1', puerto_servidor=31425):
+    def __init__(self, rol='cliente', ip_servidor='127.0.0.1', puerto_servidor=31425):
         Normal.__init__(self)
         self.Connect((ip_servidor, puerto_servidor))
         pilas.eventos.actualizar.conectar(self.actualizar)
         self._actores_compartidos = []
+        self._actores_ajenos = []
+        
+        self.servidor = None
+        if (rol == 'servidor'):
+            self.servidor = ServidorPilas(puerto_servidor=31425)
         
     def agregarActorObservado(self, actor):
         actor.conectarObservador(self)
         self._actores_compartidos.append(actor)
         
-    def cambioEnActor(self, event):
-        connection.Send({"action": "mover_actor", "x" : event['x'] , "id" : event['id']})
+    def cambioEnActor(self, data):
+        connection.Send(data)
              
     def actualizar(self, evento):
+        # Actualizamos el servidor si existe.
+        if (self.servidor != None):
+            self.servidor.actualizar()
+        
         if (len(self._actores_compartidos) > 0):
             for actor in self._actores_compartidos:
                 if (isinstance(actor, Actor) and actor.id == ""):
                     actor.id = str(uuid.uuid4())
-                    print actor.id
-                    connection.Send({"action": "crear_actor", "clase" : actor.__class__.__name__ , "id" : actor.id})
+                    connection.Send({"action": "crear_actor", 
+                                     "clase" : actor.__class__.__name__ , 
+                                     "id" : actor.id,
+                                     "x" : actor.x,
+                                     "y" : actor.y})
         connection.Pump()
         self.Pump()
         

@@ -8,16 +8,27 @@ class Escena_Parametros(Normal):
     def __init__(self):
         Normal.__init__(self)
         pilas.fondos.Pasto()
-        self.boton_conectar = pilas.interfaz.Boton("Conectar")
-        self.boton_conectar.conectar(self.conectar_servidor)
+        self.boton_servidor = pilas.interfaz.Boton("Servidor")
+        self.boton_servidor.y = 100
+        self.boton_servidor.conectar(self.conectar_servidor)
+        
+        self.texto_ip_servidor = pilas.interfaz.IngresoDeTexto("127.0.0.1")
+        
+        self.boton_cliente = pilas.interfaz.Boton("Cliente")
+        self.boton_cliente.y = -50
+        self.boton_cliente.conectar(self.conectar_cliente)
         
     def conectar_servidor(self):
-        Escena_Cliente()
+        MiEscena('servidor')
+        
+    def conectar_cliente(self):
+        MiEscena('cliente', ip_servidor=self.texto_ip_servidor.texto)
 
-class Escena_Cliente(pilas.net.EscenaCliente):
+class MiEscena(pilas.net.EscenaNetwork):
     
-    def __init__(self):
-        pilas.net.EscenaCliente.__init__(self)
+    def __init__(self, rol, ip_servidor="127.0.0.1"):
+        pilas.net.EscenaNetwork.__init__(self,rol,ip_servidor=ip_servidor)
+        pilas.fondos.Tarde()
         pilas.avisar("Conectado")
         pilas.eventos.click_de_mouse.conectar(self.crear_actor)
 
@@ -26,10 +37,11 @@ class Escena_Cliente(pilas.net.EscenaCliente):
         actor.x = event.x
         actor.y = event.y
         actor.aprender(pilas.habilidades.MoverseConElTeclado)
+        actor.aprender(pilas.habilidades.AumentarConRueda)
         self.agregarActorObservado(actor)
         
     def actualizar(self, evento):
-        pilas.net.EscenaCliente.actualizar(self, evento)
+        pilas.net.EscenaNetwork.actualizar(self, evento)
 
 pilas.iniciar()
 

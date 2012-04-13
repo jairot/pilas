@@ -6,5 +6,5 @@
 #
 # website - http://www.pilas-engine.com.ar
 
-from escenas import EscenaServidor
-from escenas import EscenaCliente
+from escenas import ServidorPilas
+from escenas import EscenaNetwork

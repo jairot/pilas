@@ -93,7 +93,12 @@ class Actor(object, Estudiante):
     
     def notificarObservadores(self):
         for listener in self.listeners:            
-            listener.cambioEnActor({"id": self.id, "x" : self.x})
+            listener.cambioEnActor({"action": "mover_actor",
+                                    "id": self.id, 
+                                    "x" : self.x, 
+                                    "y" : self.y,
+                                    "escala_x" : self.escala_x,
+                                    "escala_y" : self.escala_y,})
     # -------------------------
     
     def definir_centro(self, (x, y)):
@@ -162,8 +167,8 @@ class Actor(object, Estudiante):
 
     @pilas.utils.interpolable
     def set_x(self, x):
-        self.notificarObservadores()
         self.definir_posicion(x, self.y)
+        self.notificarObservadores()
 
     def get_z(self):
         return self._z
@@ -176,6 +181,7 @@ class Actor(object, Estudiante):
     @pilas.utils.interpolable
     def set_y(self, y):
         self.definir_posicion(self.x, y)
+        self.notificarObservadores()
 
     def get_y(self):
         x, y = self.obtener_posicion()
@@ -402,6 +408,7 @@ class Actor(object, Estudiante):
 
     def definir_escala(self, escala):
         self._actor.definir_escala(escala)
+        self.notificarObservadores()
 
     def definir_transparencia(self, valor):
         self._actor.definir_transparencia(valor)
