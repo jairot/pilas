@@ -65,7 +65,7 @@ class ServidorPilas(Server):
     channelClass = ClientChannel
     
     def __init__(self, puerto_servidor=31425):
-        Server.__init__(self, localaddr=("127.0.0.1", puerto_servidor))
+        Server.__init__(self, localaddr=(pilas.net.obteber_ip_local(), puerto_servidor))
         print "Servidor iniciado en el pueto :" , puerto_servidor
         self._clientes = WeakKeyDictionary()
         self.actores = []

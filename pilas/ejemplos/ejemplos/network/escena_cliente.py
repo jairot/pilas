@@ -12,7 +12,7 @@ class Escena_Parametros(Normal):
         self.boton_servidor.y = 100
         self.boton_servidor.conectar(self.conectar_servidor)
         
-        self.texto_ip_servidor = pilas.interfaz.IngresoDeTexto("127.0.0.1")
+        self.texto_ip_servidor = pilas.interfaz.IngresoDeTexto(pilas.net.obteber_ip_local())
         
         self.boton_cliente = pilas.interfaz.Boton("Cliente")
         self.boton_cliente.y = -50
@@ -26,7 +26,7 @@ class Escena_Parametros(Normal):
 
 class MiEscena(pilas.net.EscenaNetwork):
     
-    def __init__(self, rol, ip_servidor="127.0.0.1"):
+    def __init__(self, rol, ip_servidor=pilas.net.obteber_ip_local()):
         pilas.net.EscenaNetwork.__init__(self,rol,ip_servidor=ip_servidor)
         pilas.fondos.Tarde()
         pilas.avisar("Conectado")
