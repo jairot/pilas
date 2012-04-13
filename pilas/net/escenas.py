@@ -45,6 +45,10 @@ class CanalCliente(Channel):
         # Enviamos el comando al resto de clientes.
         self._server.enviar_a_cliente(data)
 
+    def Network_eliminar_actor(self, data):
+        """ Manda la acción de eliminar un actor en el resto de Clientes """
+        self._server.enviar_al_resto(data, self)
+        
     def Close(self):
         pass
 
@@ -100,7 +104,6 @@ class ServidorPilas(Server):
     def enviar_a_cliente(self, data):
         for c in self._clientes:
             if (c.addr == data['cliente']):
-                print data
                 c.Send(data)
         
 
@@ -151,6 +154,12 @@ class EscucharServidor(ConnectionListener):
                                  "escala_x" : actor.escala_x,
                                  "escala_y" : actor.escala_y})
 
+    def Network_eliminar_actor(self, data):
+        for actor in self._actores_ajenos:
+            if (isinstance(actor, Actor) and actor.id == data['id']):
+                actor.eliminar()
+                break
+
 class EscenaNetwork(Normal, EscucharServidor, ActorObserver):
     
     def __init__(self, rol='cliente', ip_servidor='127.0.0.1', puerto_servidor=31425):
@@ -160,13 +169,25 @@ class EscenaNetwork(Normal, EscucharServidor, ActorObserver):
         self._actores_compartidos = []
         self._actores_ajenos = []
         
+        pilas.mundo.colisiones.agregar(self._actores_compartidos, self._actores_ajenos, self.colision_con_ajenos)
+        
         self.servidor = None
         if (rol == 'servidor'):
             self.servidor = ServidorPilas(puerto_servidor=31425)
-        
-    def agregarActorObservado(self, actor):
+    
+    def colision_con_ajenos(self, acto_compartido, actor_ajeno):
+        print "colision_con_ajenos(self, acto_compartido, actor_ajeno): No implementado."
+    
+    def agregar_Actor_Observado(self, actor):
         actor.conectarObservador(self)
         self._actores_compartidos.append(actor)
+
+    def eliminar_Actor_Observado(self, actor):
+        actor.desconectarObservador(self)
+        actor.eliminar()
+        self._actores_compartidos.remove(actor)
+        connection.Send({"action" : "eliminar_actor",
+                                 "id" : actor.id})
         
     def cambioEnActor(self, data):
         connection.Send(data)
@@ -180,7 +201,6 @@ class EscenaNetwork(Normal, EscucharServidor, ActorObserver):
             for actor in self._actores_compartidos:
                 if (isinstance(actor, Actor) and actor.id == ""):
                     actor.id = str(uuid.uuid4())
-                    print "crear_actor"
                     connection.Send({"action" : "crear_actor",
                                  "clase" : actor.__class__.__name__ , 
                                  "id" : actor.id,

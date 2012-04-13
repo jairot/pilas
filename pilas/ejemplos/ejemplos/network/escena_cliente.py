@@ -31,14 +31,19 @@ class MiEscena(pilas.net.EscenaNetwork):
         pilas.fondos.Tarde()
         pilas.avisar("Conectado")
         pilas.eventos.click_de_mouse.conectar(self.crear_actor)
+        
 
+    def colision_con_ajenos(self, actor_compartido, actor_ajeno):
+        self.eliminar_Actor_Observado(actor_compartido)
+    
     def crear_actor(self, event):
         actor = Aceituna()
         actor.x = event.x
         actor.y = event.y
         actor.aprender(pilas.habilidades.MoverseConElTeclado)
         actor.aprender(pilas.habilidades.AumentarConRueda)
-        self.agregarActorObservado(actor)
+        actor.aprender(pilas.habilidades.PuedeExplotar)
+        self.agregar_Actor_Observado(actor)
         
     def actualizar(self, evento):
         pilas.net.EscenaNetwork.actualizar(self, evento)
