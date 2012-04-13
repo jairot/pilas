@@ -98,7 +98,8 @@ class Actor(object, Estudiante):
                                     "x" : self.x, 
                                     "y" : self.y,
                                     "escala_x" : self.escala_x,
-                                    "escala_y" : self.escala_y,})
+                                    "escala_y" : self.escala_y,
+                                    "rotacion" : self.rotacion})
     # -------------------------
     
     def definir_centro(self, (x, y)):
@@ -229,6 +230,7 @@ class Actor(object, Estudiante):
     @pilas.utils.interpolable
     def set_rotation(self, x):
         self.definir_rotacion(x)
+        self.notificarObservadores()
 
     def get_espejado(self):
         return self._espejado

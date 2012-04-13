@@ -37,12 +37,12 @@ class MiEscena(pilas.net.EscenaNetwork):
         self.eliminar_Actor_Observado(actor_compartido)
     
     def crear_actor(self, event):
-        actor = Aceituna()
+        actor = Nave()
         actor.x = event.x
         actor.y = event.y
-        actor.aprender(pilas.habilidades.MoverseConElTeclado)
-        actor.aprender(pilas.habilidades.AumentarConRueda)
-        actor.aprender(pilas.habilidades.PuedeExplotar)
+        #actor.aprender(pilas.habilidades.MoverseConElTeclado)
+        #actor.aprender(pilas.habilidades.AumentarConRueda)
+        #actor.aprender(pilas.habilidades.PuedeExplotar)
         self.agregar_Actor_Observado(actor)
         
     def actualizar(self, evento):

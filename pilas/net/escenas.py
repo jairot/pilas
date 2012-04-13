@@ -129,6 +129,7 @@ class EscucharServidor(ConnectionListener):
         actor.y = data['y']
         actor.escala_x = data['escala_x']
         actor.escala_y = data['escala_y']
+        actor.rotacion = data['rotacion']
         self._actores_ajenos.append(actor)
     
     def Network_mover_actor(self, data):
@@ -139,6 +140,7 @@ class EscucharServidor(ConnectionListener):
                 actor.y = data['y']
                 actor.escala_x = data['escala_x']
                 actor.escala_y = data['escala_y']
+                actor.rotacion = data['rotacion']
                 break
             
     def Network_enviar_actores_a_cliente(self, data):
@@ -152,12 +154,14 @@ class EscucharServidor(ConnectionListener):
                                  "x" : actor.x,
                                  "y" : actor.y,
                                  "escala_x" : actor.escala_x,
-                                 "escala_y" : actor.escala_y})
+                                 "escala_y" : actor.escala_y,
+                                 "rotacion" : actor.rotacion})
 
     def Network_eliminar_actor(self, data):
         for actor in self._actores_ajenos:
             if (isinstance(actor, Actor) and actor.id == data['id']):
                 actor.eliminar()
+                self._actores_ajenos.remove(actor)
                 break
 
 class EscenaNetwork(Normal, EscucharServidor, ActorObserver):
@@ -183,11 +187,12 @@ class EscenaNetwork(Normal, EscucharServidor, ActorObserver):
         self._actores_compartidos.append(actor)
 
     def eliminar_Actor_Observado(self, actor):
+        id = actor.id
         actor.desconectarObservador(self)
         actor.eliminar()
         self._actores_compartidos.remove(actor)
         connection.Send({"action" : "eliminar_actor",
-                                 "id" : actor.id})
+                                 "id" : id})
         
     def cambioEnActor(self, data):
         connection.Send(data)
@@ -207,7 +212,8 @@ class EscenaNetwork(Normal, EscucharServidor, ActorObserver):
                                  "x" : actor.x,
                                  "y" : actor.y,
                                  "escala_x" : actor.escala_x,
-                                 "escala_y" : actor.escala_y})
+                                 "escala_y" : actor.escala_y,
+                                 "rotacion" : actor.rotacion})
         connection.Pump()
         self.Pump()
         
