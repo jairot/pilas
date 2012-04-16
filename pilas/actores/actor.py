@@ -15,7 +15,6 @@ ARRIBA = ["arriba", "superior"]
 CENTRO = ["centro", "centrado", "medio", "arriba"]
 ABAJO = ["abajo", "inferior", "debajo"]
 
-
 class Actor(object, Estudiante):
     """Representa un objeto visible en pantalla, algo que se ve y tiene posicion.
 
@@ -54,8 +53,10 @@ class Actor(object, Estudiante):
 
         >>> invisible = pilas.actores.Actor('invisible.png')
     """
+    LOCAL = "local"
+    REMOTO = "remoto"
 
-    def __init__(self, imagen="sin_imagen.png", x=0, y=0):
+    def __init__(self, imagen="sin_imagen.png", x=0, y=0, control=LOCAL):
         if not pilas.mundo:
             mensaje = "Tiene que invocar a la funcion ``pilas.iniciar()`` para comenzar."
             print mensaje
@@ -66,6 +67,7 @@ class Actor(object, Estudiante):
         self.centro = ('centro', 'centro')
         
         self.id = "" # ID para identificarlo por la red
+        self.control = control
         
         # Observadores
         self.listeners = []
