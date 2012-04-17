@@ -55,16 +55,15 @@ class MiEscena(EscenaNetwork):
     
     def colision_con_actores_remotos(self, actor_local, actor_remoto):
         if (isinstance(actor_remoto, Disparo) and isinstance(actor_local, Tanque)):
-            self.mi_tanque.quitar_vida()            
+            self.mi_tanque.quitar_vida()
+            self.enviar_a_propietario_actor_puntos(actor_remoto, 5)           
             self.eliminar_actor_remoto(actor_remoto)
         elif (isinstance(actor_local, Tanque) and isinstance(actor_remoto, DisparoTriple)):
-            print "POWER UP REMOTO"
             self.eliminar_actor_remoto(actor_remoto)
             self.mi_tanque.disparo_triple = True   
                                            
     def colision_con_actores_locales(self, actor_local1, actor_local2):
         if (isinstance(actor_local1, Tanque) and isinstance(actor_local2, DisparoTriple)):
-            print "POWER UP LOCAL"
             self.eliminar_actor_local(actor_local2)
             self.mi_tanque.disparo_triple = True   
     
@@ -93,6 +92,8 @@ class MiEscena(EscenaNetwork):
             aleatorio = random.randint(0,300)
             if (aleatorio == 50):
                 self.crear_power_up()
+        
+        self.puntaje.texto = str(self.puntos)
         
         EscenaNetwork.actualizar(self, evento)
     

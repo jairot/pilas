@@ -20,6 +20,8 @@ class Tanque(Actor):
         self.imagen = pilas.imagenes.cargar_imagen("data/tanque.png")
         self.aprender(pilas.habilidades.PuedeExplotar)
         
+        self.radio_de_colision = 15
+        
         self.disparo = False
         self.disparo_triple = False
         self.contador_frecuencia_disparo = 0

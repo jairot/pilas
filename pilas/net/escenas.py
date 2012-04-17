@@ -49,7 +49,10 @@ class CanalCliente(Channel):
             Elimina un actor del resto de clientes.
         """
         self._server.enviar_al_resto(data, self)
-        
+    
+    def Network_enviar_a_propietario_actor_puntos(self, data):
+        self._server.enviar_a_propietario_actor_puntos(data)
+    
     def Close(self):
         self._server.eliminar_cliente(self)
 
@@ -102,6 +105,15 @@ class ServidorPilas(Server):
         for c in self._clientes:
             if (c.addr == data['cliente']):
                 c.Send(data)
+    
+    def enviar_a_propietario_actor_puntos(self, data):
+        print data
+        for actor in self.actores:            
+            if (actor['id'] == data['id']):
+                for c in self._clientes:
+                    if (c.addr == actor['cliente']):
+                        c.Send(data)
+                break
         
 class ActorObserver():
     def cambioEnActor(self, event):
@@ -127,7 +139,6 @@ class EscucharServidor(ConnectionListener):
     def Network_crear_actor(self, data):
         """ Crea un actor de otro Cliente """
         exec("from  " + data['modulo'] + " import " + data['clase'])
-        
         clase_actor = eval(data['clase'])
         actor = clase_actor(control=Actor.REMOTO)
         actor.id = data['id']
@@ -177,6 +188,8 @@ class EscucharServidor(ConnectionListener):
                 actor.eliminar()
                 break
 
+    def Network_enviar_a_propietario_actor_puntos(self, data):
+        self.puntos += int(data['puntos'])
 
 class EscenaNetwork(Normal, EscucharServidor, ActorObserver):
     
@@ -204,6 +217,12 @@ class EscenaNetwork(Normal, EscucharServidor, ActorObserver):
             return True
         else:
             return False 
+        
+    def enviar_a_propietario_actor_puntos(self, actor, puntos=1):
+        connection.Send({"action" : "enviar_a_propietario_actor_puntos",
+                                 "id" : actor.id,
+                                 "puntos" : puntos})
+        
     
     def colision_con_actores_remotos(self, acto_local, actor_remoto):
         raise NotImplementedError("colision_con_actores_remotos(self, acto_local, actor_remoto): No implementado.")
