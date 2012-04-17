@@ -78,6 +78,10 @@ class ServidorPilas(Server):
     
     def eliminar_cliente(self, cliente):
         print "Eliminando Cliente " + str(cliente.addr)
+        for actor in self.actores:
+            if (actor['cliente'] == cliente.addr):
+                self.enviar_al_resto({"action" : "eliminar_actor", 
+                                      "id" : actor['id']}, cliente)
         del self._clientes[cliente]
 
     def enviar_actores_a_cliente(self, cliente):
@@ -108,7 +112,9 @@ class EscucharServidor(ConnectionListener):
     """ 
     Clase que implementa las peticiones que le llegan desde el servidor.    
     """
-    
+    def Network(self, data):
+        pass #print 'network data:', data
+            
     def Network_connected(self, data):
         pilas.avisar("Conectado al servidor")
         
@@ -161,14 +167,14 @@ class EscucharServidor(ConnectionListener):
     def Network_eliminar_actor(self, data):    
         for actor in self._actores_remotos:
             if (isinstance(actor, Actor) and actor.id == data['id']):
-                print "Eliminando el actor remoto con orden de red"
+                actor = self._actores_remotos.pop(self._actores_remotos.index(actor))
                 actor.eliminar()
                 break
             
         for actor in self._actores_locales:
             if (isinstance(actor, Actor) and actor.id == data['id']):
+                actor = self._actores_locales.pop(self._actores_locales.index(actor))
                 actor.eliminar()
-                print "Eliminando el actor local con orden de red"
                 break
 
 
@@ -183,17 +189,28 @@ class EscenaNetwork(Normal, EscucharServidor, ActorObserver):
         self.puntos = 0
         
         pilas.mundo.colisiones.agregar(self._actores_locales, self._actores_remotos, self.colision_con_actores_remotos)
-        
+        pilas.mundo.colisiones.agregar(self._actores_locales, self._actores_locales, self.colision_con_actores_locales)
+
+                
         self.servidor = None
         if (rol == 'servidor'):
             self.servidor = ServidorPilas(puerto_servidor=31425)
-    
+        
     def aumentar_puntos(self, cantidad):
         self.puntos += cantidad
     
-    def colision_con_actores_remotos(self, acto_compartido, actor_ajeno):
-        raise NotImplementedError("colision_con_remotos(self, acto_compartido, actor_ajeno): No implementado.")
+    def soy_cliente(self):
+        if (self.servidor == None):
+            return True
+        else:
+            return False 
     
+    def colision_con_actores_remotos(self, acto_local, actor_remoto):
+        raise NotImplementedError("colision_con_actores_remotos(self, acto_local, actor_remoto): No implementado.")
+    
+    def colision_con_actores_locales(self, acto_local1, actor_local2):
+        raise NotImplementedError("colision_con_actores_locales(self, acto_local1, actor_local2): No implementado.")
+
     def agregar_actor_local(self, actor):
         
         if not isinstance(actor, list):
@@ -207,7 +224,16 @@ class EscenaNetwork(Normal, EscucharServidor, ActorObserver):
     def eliminar_actor_local(self, actor):
         id = actor.id
         actor.desconectarObservador(self)
+        actor = self._actores_locales.pop(self._actores_locales.index(actor))
         actor.eliminar()
+        connection.Send({"action" : "eliminar_actor",
+                                 "id" : id})
+
+    def destruir_actor_local(self, actor):
+        id = actor.id
+        actor.desconectarObservador(self)
+        actor = self._actores_locales.pop(self._actores_locales.index(actor))
+        actor.destruir()
         connection.Send({"action" : "eliminar_actor",
                                  "id" : id})
     
@@ -216,11 +242,13 @@ class EscenaNetwork(Normal, EscucharServidor, ActorObserver):
     
     def eliminar_actor_remoto(self, actor_remoto):
         id = actor_remoto.id
+        actor_remoto = self._actores_remotos.pop(self._actores_remotos.index(actor_remoto))
         actor_remoto.eliminar()
         connection.Send({"action" : "eliminar_actor", "id" : id})
 
     def cambioEnActor(self, data):
-        connection.Send(data)
+        accion = {"action": "mover_actor"}
+        connection.Send (dict(accion.items() + data.items()))
              
     def actualizar(self, evento):
         # Actualizamos el servidor si existe.

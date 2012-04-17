@@ -8,6 +8,7 @@ from pilas.net import *
 import actores
 from actores.tanque import Tanque
 from actores.disparo import Disparo
+from actores.disparo import DisparoTriple
 
 class Escena_Parametros(Normal):
     
@@ -46,26 +47,61 @@ class MiEscena(EscenaNetwork):
         self.mi_tanque = actores.tanque.Tanque(x=rand_x, y=rand_y)
         self.agregar_actor_local(self.mi_tanque)
     
+    def crear_power_up(self):
+        rand_x = random.randint(-320,320)
+        rand_y = random.randint(-240,240)
+        disparo_triple = DisparoTriple(x=rand_x, y=rand_y)
+        self.agregar_actor_local(disparo_triple)
+    
     def colision_con_actores_remotos(self, actor_local, actor_remoto):
-        if (isinstance(actor_remoto, Disparo)):
+        if (isinstance(actor_remoto, Disparo) and isinstance(actor_local, Tanque)):
             self.mi_tanque.quitar_vida()            
             self.eliminar_actor_remoto(actor_remoto)
+        elif (isinstance(actor_local, Tanque) and isinstance(actor_remoto, DisparoTriple)):
+            print "POWER UP REMOTO"
+            self.eliminar_actor_remoto(actor_remoto)
+            self.mi_tanque.disparo_triple = True   
                                            
+    def colision_con_actores_locales(self, actor_local1, actor_local2):
+        if (isinstance(actor_local1, Tanque) and isinstance(actor_local2, DisparoTriple)):
+            print "POWER UP LOCAL"
+            self.eliminar_actor_local(actor_local2)
+            self.mi_tanque.disparo_triple = True   
     
     def actualizar(self, evento):
         if (self.mi_tanque.disparo):
-            self.agregar_actor_local(self.mi_tanque.disparos)
+            if (self.mi_tanque.disparo_triple): 
+                self.agregar_actor_local(self.mi_tanque.disparos[-1])
+                self.mi_tanque.disparos[-1].evento_destruir.conectar(self.eliminar_bala)
+                self.agregar_actor_local(self.mi_tanque.disparos[-2])
+                self.mi_tanque.disparos[-2].evento_destruir.conectar(self.eliminar_bala)
+                self.agregar_actor_local(self.mi_tanque.disparos[-3])
+                self.mi_tanque.disparos[-3].evento_destruir.conectar(self.eliminar_bala)
+                
+            else:
+                self.agregar_actor_local(self.mi_tanque.disparos[-1])
+                self.mi_tanque.disparos[-1].evento_destruir.conectar(self.eliminar_bala)
+                
             self.mi_tanque.disparo = False
         
         if (self.mi_tanque.get_vida() <= 0):
             self.eliminar_actor_local(self.mi_tanque)
             # Creamos uno nuevo
             self.crear_tanque()
-            
-            
+    
+        if not(self.soy_cliente()):
+            aleatorio = random.randint(0,300)
+            if (aleatorio == 50):
+                self.crear_power_up()
+        
         EscenaNetwork.actualizar(self, evento)
+    
+    def eliminar_bala(self, datos_evento):       
+        self.destruir_actor_local(datos_evento['bala'])
+                
+        
 
-pilas.iniciar()
+pilas.iniciar(titulo="Tanques Net")
 
 Escena_Parametros()
 

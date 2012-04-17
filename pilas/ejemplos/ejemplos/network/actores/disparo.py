@@ -14,12 +14,16 @@ class Disparo(Actor):
         self.aprender(pilas.habilidades.PuedeExplotar)
         self.radio_de_colision = 4
         self.tiempo_activo = 100
-        self.rotacion = rotacion        
+        self.rotacion = rotacion   
+        self.listeners = []
+        
+        self.evento_destruir = pilas.eventos.Evento("Destruir Disparo")   
 
     def actualizar(self):
         self.avanzar()
         self.tiempo_activo -= 1
         if (self.tiempo_activo < 0):
+            self.evento_destruir.emitir(bala=self)
             self.destruir()
 
     def avanzar(self):
@@ -35,3 +39,8 @@ class CrossHair(Actor):
     def __init__(self, x=0, y=0):
         Actor.__init__(self, x=x, y=y)
         self.imagen = pilas.imagenes.cargar_imagen("data/crosshair.png")
+        
+class DisparoTriple(Actor):
+    def __init__(self, x=0, y=0, control=Actor.LOCAL):
+        Actor.__init__(self, x=x, y=y, control=control)
+        self.imagen = pilas.imagenes.cargar_imagen("data/power.png")        

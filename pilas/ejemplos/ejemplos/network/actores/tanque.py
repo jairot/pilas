@@ -21,6 +21,7 @@ class Tanque(Actor):
         self.aprender(pilas.habilidades.PuedeExplotar)
         
         self.disparo = False
+        self.disparo_triple = False
         self.contador_frecuencia_disparo = 0
                 
         
@@ -55,7 +56,11 @@ class Tanque(Actor):
             if pilas.mundo.control.boton:
                 if self.barra_recarga.progreso >= 100:
                     self.barra_recarga.progreso = 0
-                    self.disparar()
+                    if self.disparo_triple:
+                        self.disparar_triple()
+                        self.disparo_triple = False
+                    else:
+                        self.disparar()
             
     def actualizar_posicion_barras(self):
             self.barra_recarga.set_x(self.x)
@@ -98,6 +103,7 @@ class Tanque(Actor):
         disparo_nuevo = disparo.Disparo(self.x, self.y, self.rotacion, 4)
         self.disparos.append(disparo_nuevo)                
         self.disparo = True
+        self.disparo_triple = False
         
     def disparar_triple(self):
         self._crear_humo()
