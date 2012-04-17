@@ -52,6 +52,9 @@ class CanalCliente(Channel):
     
     def Network_enviar_a_propietario_actor_puntos(self, data):
         self._server.enviar_a_propietario_actor_puntos(data)
+        
+    def Network_notificar_perdedores(self, data):
+        self._server.enviar_al_resto(data, self)
     
     def Close(self):
         self._server.eliminar_cliente(self)
@@ -107,7 +110,6 @@ class ServidorPilas(Server):
                 c.Send(data)
     
     def enviar_a_propietario_actor_puntos(self, data):
-        print data
         for actor in self.actores:            
             if (actor['id'] == data['id']):
                 for c in self._clientes:
@@ -190,6 +192,9 @@ class EscucharServidor(ConnectionListener):
 
     def Network_enviar_a_propietario_actor_puntos(self, data):
         self.puntos += int(data['puntos'])
+        
+    def Network_notificar_perdedores(self, data):
+        self.escena_perdedor()
 
 class EscenaNetwork(Normal, EscucharServidor, ActorObserver):
     
@@ -217,13 +222,19 @@ class EscenaNetwork(Normal, EscucharServidor, ActorObserver):
             return True
         else:
             return False 
-        
+    
+    def escena_ganador(self):
+        connection.Send({"action" : "notificar_perdedores"})
+        Escena_Ganador()
+    
+    def escena_perdedor(self):
+        Escena_Perdedor()
+
     def enviar_a_propietario_actor_puntos(self, actor, puntos=1):
         connection.Send({"action" : "enviar_a_propietario_actor_puntos",
                                  "id" : actor.id,
                                  "puntos" : puntos})
         
-    
     def colision_con_actores_remotos(self, acto_local, actor_remoto):
         raise NotImplementedError("colision_con_actores_remotos(self, acto_local, actor_remoto): No implementado.")
     
@@ -289,4 +300,18 @@ class EscenaNetwork(Normal, EscucharServidor, ActorObserver):
                                  "rotacion" : actor.rotacion})
         connection.Pump()
         self.Pump()
+        
+        
+class Escena_Ganador(Normal):
+    def __init__(self):
+        Normal.__init__(self)
+        texto = pilas.actores.Texto("HAS GANADO")
+        texto.color = pilas.colores.negro
+
+class Escena_Perdedor(Normal):
+    def __init__(self):
+        Normal.__init__(self)
+        texto = pilas.actores.Texto("HAS PERDIDO")
+        texto.color = pilas.colores.negro
+        
         

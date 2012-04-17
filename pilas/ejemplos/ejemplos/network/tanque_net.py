@@ -94,6 +94,8 @@ class MiEscena(EscenaNetwork):
                 self.crear_power_up()
         
         self.puntaje.texto = str(self.puntos)
+        if (self.puntaje.texto == "20"):
+            self.escena_ganador()
         
         EscenaNetwork.actualizar(self, evento)
     
@@ -101,6 +103,7 @@ class MiEscena(EscenaNetwork):
         self.destruir_actor_local(datos_evento['bala'])
                 
         
+
 
 pilas.iniciar(titulo="Tanques Net")
 
