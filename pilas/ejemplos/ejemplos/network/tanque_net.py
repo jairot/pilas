@@ -127,7 +127,7 @@ class MiEscena(EscenaNetwork):
                 self.crear_velocidad()
         
         self.puntaje.texto = str(self.puntos)
-        if (self.puntaje.texto == "20"):
+        if (self.puntaje.texto == "60"):
             self.escena_ganador()
         
         EscenaNetwork.actualizar(self, evento)
