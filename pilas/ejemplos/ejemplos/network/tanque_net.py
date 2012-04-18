@@ -69,7 +69,6 @@ class MiEscena(EscenaNetwork):
             self.mi_tanque.disparo_triple = True   
     
     def disparo(self, evento):
-        print evento
         if (evento['tipo'] == 'simple'):
             self.agregar_actor_local(self.mi_tanque.disparos[-1])
             self.mi_tanque.disparos[-1].evento_destruir.conectar(self.eliminar_bala)
