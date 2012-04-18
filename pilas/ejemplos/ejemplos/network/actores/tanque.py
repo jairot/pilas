@@ -22,12 +22,12 @@ class Tanque(Actor):
         
         self.radio_de_colision = 15
         
-        self.disparo = False
         self.disparo_triple = False
         self.contador_frecuencia_disparo = 0
                 
         
         self.disparos = []
+        self.evento_disparar = pilas.eventos.Evento("Disparo Tanque")
 
         if (self.control == Actor.LOCAL):
             self.barra_recarga = pilas.actores.Energia(self.x, self.y + 22, progreso=100, ancho=50, alto = 6, con_brillo=False, con_sombra=False)
@@ -60,9 +60,11 @@ class Tanque(Actor):
                     self.barra_recarga.progreso = 0
                     if self.disparo_triple:
                         self.disparar_triple()
+                        self.evento_disparar.emitir(tipo="triple")
                         self.disparo_triple = False
                     else:
                         self.disparar()
+                        self.evento_disparar.emitir(tipo="simple")
             
     def actualizar_posicion_barras(self):
             self.barra_recarga.set_x(self.x)

@@ -46,6 +46,7 @@ class MiEscena(EscenaNetwork):
         rand_y = random.randint(-240,240)
         self.mi_tanque = actores.tanque.Tanque(x=rand_x, y=rand_y)
         self.agregar_actor_local(self.mi_tanque)
+        self.mi_tanque.evento_disparar.conectar(self.disparo)
     
     def crear_power_up(self):
         rand_x = random.randint(-320,320)
@@ -67,21 +68,20 @@ class MiEscena(EscenaNetwork):
             self.eliminar_actor_local(actor_local2)
             self.mi_tanque.disparo_triple = True   
     
+    def disparo(self, evento):
+        print evento
+        if (evento['tipo'] == 'simple'):
+            self.agregar_actor_local(self.mi_tanque.disparos[-1])
+            self.mi_tanque.disparos[-1].evento_destruir.conectar(self.eliminar_bala)
+        elif (evento['tipo'] == 'triple'):
+            self.agregar_actor_local(self.mi_tanque.disparos[-1])
+            self.mi_tanque.disparos[-1].evento_destruir.conectar(self.eliminar_bala)
+            self.agregar_actor_local(self.mi_tanque.disparos[-2])
+            self.mi_tanque.disparos[-2].evento_destruir.conectar(self.eliminar_bala)
+            self.agregar_actor_local(self.mi_tanque.disparos[-3])
+            self.mi_tanque.disparos[-3].evento_destruir.conectar(self.eliminar_bala)
+    
     def actualizar(self, evento):
-        if (self.mi_tanque.disparo):
-            if (self.mi_tanque.disparo_triple): 
-                self.agregar_actor_local(self.mi_tanque.disparos[-1])
-                self.mi_tanque.disparos[-1].evento_destruir.conectar(self.eliminar_bala)
-                self.agregar_actor_local(self.mi_tanque.disparos[-2])
-                self.mi_tanque.disparos[-2].evento_destruir.conectar(self.eliminar_bala)
-                self.agregar_actor_local(self.mi_tanque.disparos[-3])
-                self.mi_tanque.disparos[-3].evento_destruir.conectar(self.eliminar_bala)
-                
-            else:
-                self.agregar_actor_local(self.mi_tanque.disparos[-1])
-                self.mi_tanque.disparos[-1].evento_destruir.conectar(self.eliminar_bala)
-                
-            self.mi_tanque.disparo = False
         
         if (self.mi_tanque.get_vida() <= 0):
             self.eliminar_actor_local(self.mi_tanque)
