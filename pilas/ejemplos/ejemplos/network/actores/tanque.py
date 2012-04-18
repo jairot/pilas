@@ -111,9 +111,9 @@ class Tanque(Actor):
         
     def disparar_triple(self):
         self._crear_humo()
-        disparo_nuevo_1 = disparo.Disparo(self.x, self.y, self.rotacion-5, 4)
+        disparo_nuevo_1 = disparo.Disparo(self.x, self.y, self.rotacion-15, 4)
         disparo_nuevo_2 = disparo.Disparo(self.x, self.y, self.rotacion, 4)
-        disparo_nuevo_3 = disparo.Disparo(self.x, self.y, self.rotacion+5, 4)
+        disparo_nuevo_3 = disparo.Disparo(self.x, self.y, self.rotacion+15, 4)
         self.disparos.append(disparo_nuevo_1)                        
         self.disparos.append(disparo_nuevo_2)
         self.disparos.append(disparo_nuevo_3)

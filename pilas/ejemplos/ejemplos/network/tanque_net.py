@@ -9,6 +9,7 @@ import actores
 from actores.tanque import Tanque
 from actores.disparo import Disparo
 from actores.disparo import DisparoTriple
+from actores.velocidad import Velocidad
 
 class Escena_Parametros(Normal):
     
@@ -48,11 +49,30 @@ class MiEscena(EscenaNetwork):
         self.agregar_actor_local(self.mi_tanque)
         self.mi_tanque.evento_disparar.conectar(self.disparo)
     
-    def crear_power_up(self):
-        rand_x = random.randint(-320,320)
-        rand_y = random.randint(-240,240)
-        disparo_triple = DisparoTriple(x=rand_x, y=rand_y)
-        self.agregar_actor_local(disparo_triple)
+    def crear_disparo_triple(self):
+        hay_disparo = False
+        for actor in self._actores_locales:
+            if isinstance(actor, DisparoTriple):
+                hay_disparo = True
+                break
+        if not (hay_disparo):
+            rand_x = random.randint(-320,320)
+            rand_y = random.randint(-240,240)
+            disparo_triple = DisparoTriple(x=rand_x, y=rand_y)
+            self.agregar_actor_local(disparo_triple)
+    
+    def crear_velocidad(self):
+        hay_velocidad = False
+        for actor in self._actores_locales:
+            if isinstance(actor, Velocidad):
+                hay_velocidad = True
+                break
+        if not (hay_velocidad):
+            rand_x = random.randint(-320,320)
+            rand_y = random.randint(-240,240)
+            velocidad = Velocidad(x=rand_x, y=rand_y)
+            self.agregar_actor_local(velocidad)
+        
     
     def colision_con_actores_remotos(self, actor_local, actor_remoto):
         if (isinstance(actor_remoto, Disparo) and isinstance(actor_local, Tanque)):
@@ -61,12 +81,24 @@ class MiEscena(EscenaNetwork):
             self.eliminar_actor_remoto(actor_remoto)
         elif (isinstance(actor_local, Tanque) and isinstance(actor_remoto, DisparoTriple)):
             self.eliminar_actor_remoto(actor_remoto)
-            self.mi_tanque.disparo_triple = True   
+            self.mi_tanque.disparo_triple = True
+            pilas.avisar("Disparo Triple")
+        elif (isinstance(actor_local, Tanque) and isinstance(actor_remoto, Velocidad)):
+            self.eliminar_actor_remoto(actor_remoto)
+            if (self.mi_tanque.velocidad < 3):
+                self.mi_tanque.velocidad += 1
+                pilas.avisar("Aumento de velocidad")
                                            
     def colision_con_actores_locales(self, actor_local1, actor_local2):
         if (isinstance(actor_local1, Tanque) and isinstance(actor_local2, DisparoTriple)):
             self.eliminar_actor_local(actor_local2)
-            self.mi_tanque.disparo_triple = True   
+            self.mi_tanque.disparo_triple = True
+            pilas.avisar("Disparo Triple")
+        elif (isinstance(actor_local1, Tanque) and isinstance(actor_local2, Velocidad)):
+            self.eliminar_actor_local(actor_local2)
+            if (self.mi_tanque.velocidad < 3):
+                self.mi_tanque.velocidad += 1
+                pilas.avisar("Aumento de velocidad")
     
     def disparo(self, evento):
         if (evento['tipo'] == 'simple'):
@@ -90,7 +122,9 @@ class MiEscena(EscenaNetwork):
         if not(self.soy_cliente()):
             aleatorio = random.randint(0,300)
             if (aleatorio == 50):
-                self.crear_power_up()
+                self.crear_disparo_triple()
+            if (aleatorio == 100):
+                self.crear_velocidad()
         
         self.puntaje.texto = str(self.puntos)
         if (self.puntaje.texto == "20"):
