@@ -34,6 +34,7 @@ class Tanque(Actor):
             self.barra_vida = pilas.actores.Energia(self.x, self.y + 30 , progreso=100, ancho=50, alto = 6, color_relleno=pilas.colores.rojo, con_brillo=False, con_sombra=False)
             self.anexar(self.barra_recarga)
             self.anexar(self.barra_vida)
+            self.crosshair = disparo.CrossHair()
     
     def set_id(self, id):
         self.id = id
@@ -66,6 +67,15 @@ class Tanque(Actor):
                         self.disparar()
                         self.evento_disparar.emitir(tipo="simple")
             
+            self._actualizar_crosshair()
+            
+    def _actualizar_crosshair(self):
+        rotacion_en_radianes = math.radians(-self.rotacion + 90)
+        dx = math.cos(rotacion_en_radianes) * 150
+        dy = math.sin(rotacion_en_radianes) * 150
+        self.crosshair.x = self.x + dx
+        self.crosshair.y = self.y + dy
+
     def actualizar_posicion_barras(self):
             self.barra_recarga.set_x(self.x)
             self.barra_recarga.set_y(self.y + 22)
