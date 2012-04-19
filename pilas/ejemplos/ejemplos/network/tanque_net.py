@@ -1,3 +1,11 @@
+# -*- encoding: utf-8 -*-
+# pilas engine - a video game framework.
+#
+# copyright 2010 - hugo ruscitti, quique porta
+# license: lgplv3 (see http://www.gnu.org/licenses/lgpl.html)
+#
+# website - http://www.pilas-engine.com.ar
+
 import random
 
 import pilas
@@ -10,6 +18,7 @@ from actores.tanque import Tanque
 from actores.disparo import Disparo
 from actores.disparo import DisparoTriple
 from actores.velocidad import Velocidad
+from pilas.actores.utils import destruir_a_todos
 
 class Escena_Parametros(Normal):
     
@@ -48,6 +57,7 @@ class MiEscena(EscenaNetwork):
         self.mi_tanque = actores.tanque.Tanque(x=rand_x, y=rand_y)
         self.agregar_actor_local(self.mi_tanque)
         self.mi_tanque.evento_disparar.conectar(self.disparo)
+        self.mi_tanque.aprender(pilas.habilidades.SeMantieneEnPantalla)
     
     def crear_disparo_triple(self):
         hay_disparo = False
@@ -75,10 +85,12 @@ class MiEscena(EscenaNetwork):
         
     
     def colision_con_actores_remotos(self, actor_local, actor_remoto):
-        if (isinstance(actor_remoto, Disparo) and isinstance(actor_local, Tanque)):
+        if (isinstance(actor_local, Tanque) and isinstance(actor_remoto, Disparo)):
             self.mi_tanque.quitar_vida()
             self.enviar_a_propietario_actor_puntos(actor_remoto, 5)           
-            self.eliminar_actor_remoto(actor_remoto)
+            self.eliminar_actor_remoto(actor_remoto, notificar=False)
+        elif (isinstance(actor_local, Disparo) and isinstance(actor_remoto, Tanque)):
+            self.eliminar_actor_local(actor_local, notificar=False)
         elif (isinstance(actor_local, Tanque) and isinstance(actor_remoto, DisparoTriple)):
             self.eliminar_actor_remoto(actor_remoto)
             self.mi_tanque.disparo_triple = True
@@ -127,16 +139,14 @@ class MiEscena(EscenaNetwork):
                 self.crear_velocidad()
         
         self.puntaje.texto = str(self.puntos)
-        if (self.puntaje.texto == "60"):
+        if (self.puntaje.texto == "30"):
             self.escena_ganador()
         
         EscenaNetwork.actualizar(self, evento)
     
     def eliminar_bala(self, datos_evento):       
-        self.destruir_actor_local(datos_evento['bala'])
+        self.eliminar_actor_local(datos_evento['bala'], notificar=False ,destruir=True)
                 
-        
-
 
 pilas.iniciar(titulo="Tanques Net")
 

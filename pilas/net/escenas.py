@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 # pilas engine - a video game framework.
 #
-# copyright 2010 - hugo ruscitti
+# copyright 2010 - hugo ruscitti, quique porta
 # license: lgplv3 (see http://www.gnu.org/licenses/lgpl.html)
 #
 # website - http://www.pilas-engine.com.ar
@@ -87,7 +87,9 @@ class ServidorPilas(Server):
         for actor in self.actores:
             if (actor['cliente'] == cliente.addr):
                 self.enviar_al_resto({"action" : "eliminar_actor", 
-                                      "id" : actor['id']}, cliente)
+                                      "id" : actor['id'],
+                                      "control" : Actor.REMOTO,
+                                      "destruir" : False}, cliente)
         del self._clientes[cliente]
 
     def enviar_actores_a_cliente(self, cliente):
@@ -177,18 +179,26 @@ class EscucharServidor(ConnectionListener):
                                  "escala_y" : actor.escala_y,
                                  "rotacion" : actor.rotacion})
 
-    def Network_eliminar_actor(self, data):    
-        for actor in self._actores_remotos:
-            if (isinstance(actor, Actor) and actor.id == data['id']):
-                actor = self._actores_remotos.pop(self._actores_remotos.index(actor))
-                actor.eliminar()
-                break
-            
-        for actor in self._actores_locales:
-            if (isinstance(actor, Actor) and actor.id == data['id']):
-                actor = self._actores_locales.pop(self._actores_locales.index(actor))
-                actor.eliminar()
-                break
+    def Network_eliminar_actor(self, data):
+        if (data['control'] == Actor.LOCAL):
+            for actor in self._actores_remotos:
+                if (isinstance(actor, Actor) and actor.id == data['id']):
+                    actor = self._actores_remotos.pop(self._actores_remotos.index(actor))
+                    if (data['destruir'] == 'True'):
+                        actor.destruir()
+                    else:
+                        actor.eliminar()
+                    break
+        if (data['control'] == Actor.REMOTO):                
+            for actor in self._actores_locales:
+                if (isinstance(actor, Actor) and actor.id == data['id']):
+                    actor = self._actores_locales.pop(self._actores_locales.index(actor))
+                    if (data['destruir'] == 'True'):
+                        actor.destruir()
+                    else:
+                        actor.eliminar()
+                    break
+
 
     def Network_enviar_a_propietario_actor_puntos(self, data):
         self.puntos += int(data['puntos'])
@@ -241,7 +251,7 @@ class EscenaNetwork(Normal, EscucharServidor, ActorObserver):
     def colision_con_actores_locales(self, acto_local1, actor_local2):
         raise NotImplementedError("colision_con_actores_locales(self, acto_local1, actor_local2): No implementado.")
 
-    def agregar_actor_local(self, actor):
+    def agregar_actor_local(self, actor, notificar=True):
         
         if not isinstance(actor, list):
             actor = [actor]
@@ -249,32 +259,51 @@ class EscenaNetwork(Normal, EscucharServidor, ActorObserver):
         for a in actor:
             if (isinstance(a, Actor)):
                 a.conectarObservador(self)            
+                a.id = str(uuid.uuid4())
                 self._actores_locales.append(a)
+                if (notificar):
+                    connection.Send({"action" : "crear_actor",
+                                 "modulo" : a.__class__.__module__,
+                                 "clase" : a.__class__.__name__ , 
+                                 "id" : a.id,
+                                 "x" : a.x,
+                                 "y" : a.y,
+                                 "escala_x" : a.escala_x,
+                                 "escala_y" : a.escala_y,
+                                 "rotacion" : a.rotacion})
 
-    def eliminar_actor_local(self, actor):
+    def eliminar_actor_local(self, actor, notificar=True, destruir=False):
         id = actor.id
         actor.desconectarObservador(self)
         actor = self._actores_locales.pop(self._actores_locales.index(actor))
-        actor.eliminar()
-        connection.Send({"action" : "eliminar_actor",
-                                 "id" : id})
+        if (destruir):
+            actor.destruir()                        
+        else:
+            actor.eliminar()
+            
+        if (notificar):
+            data = {"action" : "eliminar_actor",
+                             "id" : id,
+                             "control" :  actor.control,
+                             "destruir" : destruir}
+            connection.Send(data)
 
-    def destruir_actor_local(self, actor):
-        id = actor.id
-        actor.desconectarObservador(self)
-        actor = self._actores_locales.pop(self._actores_locales.index(actor))
-        actor.destruir()
-        connection.Send({"action" : "eliminar_actor",
-                                 "id" : id})
     
     def agregar_actor_remoto(self, actor):
         self._actores_remotos.append(actor)
     
-    def eliminar_actor_remoto(self, actor_remoto):
+    def eliminar_actor_remoto(self, actor_remoto, notificar=True, destruir=False):
         id = actor_remoto.id
         actor_remoto = self._actores_remotos.pop(self._actores_remotos.index(actor_remoto))
-        actor_remoto.eliminar()
-        connection.Send({"action" : "eliminar_actor", "id" : id})
+        if not(destruir):
+            actor_remoto.eliminar()
+        else:
+            actor_remoto.destruir()
+        if (notificar):
+            connection.Send({"action" : "eliminar_actor",
+                             "id" : id,
+                             "control" :  actor_remoto.control,
+                             "destruir" : destruir})
 
     def cambioEnActor(self, data):
         accion = {"action": "mover_actor"}
@@ -285,19 +314,6 @@ class EscenaNetwork(Normal, EscucharServidor, ActorObserver):
         if (self.servidor != None):
             self.servidor.actualizar()
         
-        if (len(self._actores_locales) > 0):
-            for actor in self._actores_locales:
-                if (isinstance(actor, Actor) and actor.id == ""):
-                    actor.id = str(uuid.uuid4())
-                    connection.Send({"action" : "crear_actor",
-                                 "modulo" : actor.__class__.__module__,
-                                 "clase" : actor.__class__.__name__ , 
-                                 "id" : actor.id,
-                                 "x" : actor.x,
-                                 "y" : actor.y,
-                                 "escala_x" : actor.escala_x,
-                                 "escala_y" : actor.escala_y,
-                                 "rotacion" : actor.rotacion})
         connection.Pump()
         self.Pump()
         
