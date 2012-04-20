@@ -425,6 +425,7 @@ class Actor(BaseActor):
 
 
 class Sonido:
+    deshabilitado = False
 
     def __init__(self, media, ruta):
         self.media = media
@@ -434,22 +435,17 @@ class Sonido:
         self.sonido = Phonon.createPlayer(Phonon.GameCategory, self.source)
 
     def reproducir(self):
-        self.sonido.seek(0)
-        self.sonido.play()
+        if not self.deshabilitado:
+            self.sonido.seek(0)
+            self.sonido.play()
 
-class Musica:
+    def detener(self):
+        self.sonido.stop()
 
-    def __init__(self, ruta):
-        import pygame
-        pygame.mixer.init()
-        pygame.mixer.music.load(ruta)
+class Musica(Sonido):
 
-    def reproducir(self, repetir=False):
-        import pygame
-        if repetir:
-            pygame.mixer.music.play(-1)
-        else:
-            pygame.mixer.music.play(0)
+    def __init__(self, media, ruta):
+        Sonido.__init__(self, media, ruta)
 
 class Base(motor.Motor):
 
@@ -546,7 +542,13 @@ class Base(motor.Motor):
         return Sonido(self.media, ruta)
 
     def cargar_musica(self, ruta):
-        return Musica(ruta)
+        return Musica(self.media, ruta)
+
+    def deshabilitar_sonido(self, estado=True):
+        Sonido.deshabilitado = estado
+
+    def deshabilitar_musica(self, estado=True):
+        Musica.deshabilitado = estado
 
     def cargar_imagen(self, ruta):
         return Imagen(ruta)

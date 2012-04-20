@@ -18,12 +18,11 @@ import fondos
 import habilidades
 import eventos
 import sonidos
-#import musica
+import musica
 import colores
 import atajos
 import escenas
 import interfaz
-import net
 
 try:
     import aplicacion
