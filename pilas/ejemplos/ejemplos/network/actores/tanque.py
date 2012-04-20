@@ -32,9 +32,10 @@ class Tanque(Actor):
         if (self.control == Actor.LOCAL):
             self.barra_recarga = pilas.actores.Energia(self.x, self.y + 22, progreso=100, ancho=50, alto = 6, con_brillo=False, con_sombra=False)
             self.barra_vida = pilas.actores.Energia(self.x, self.y + 30 , progreso=100, ancho=50, alto = 6, color_relleno=pilas.colores.rojo, con_brillo=False, con_sombra=False)
-            self.anexar(self.barra_recarga)
-            self.anexar(self.barra_vida)
             self.crosshair = disparo.CrossHair()
+            self.anexar(self.barra_recarga)
+            self.anexar(self.barra_vida)            
+            self.anexar(self.barra_vida)
     
     def set_id(self, id):
         self.id = id

@@ -143,7 +143,7 @@ class MiEscena(EscenaNetwork):
             self.mi_tanque.disparos[-3].evento_destruir.conectar(self.eliminar_bala)
     
     def actualizar(self, evento):
-        
+
         if (self.mi_tanque.get_vida() <= 0):
             self.eliminar_actor_local(self.mi_tanque)
             # Creamos uno nuevo
@@ -157,7 +157,7 @@ class MiEscena(EscenaNetwork):
                 self.crear_velocidad()
         
         self.puntaje.texto = "Puntos:" + str(self.puntos)
-        if (self.puntos == 20):
+        if (self.puntos == 40):
             self.escena_ganador()
         
         EscenaNetwork.actualizar(self, evento)
