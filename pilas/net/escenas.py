@@ -208,7 +208,9 @@ class EscenaNetwork(Normal, EscucharServidor, ActorObserver):
     
     def __init__(self, rol='cliente', ip_servidor='127.0.0.1', puerto_servidor=31425):
         Normal.__init__(self)
+        
         self.Connect((ip_servidor, puerto_servidor))
+        
         pilas.eventos.actualizar.conectar(self.actualizar)
         self._actores_locales = []
         self._actores_remotos = []

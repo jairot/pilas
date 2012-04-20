@@ -30,15 +30,27 @@ class Escena_Parametros(Normal):
     
     def __init__(self):
         Normal.__init__(self)
-        pilas.fondos.Pasto()
+        pilas.fondos.Selva()
+        
+        # Titulo
+        self.titulo = pilas.actores.Texto("Tanques Net")
+        self.titulo.y = 220
+
+        # Nombre jugador
+        self.nombre = pilas.actores.Texto("Nick:")
+        self.nombre.color = pilas.colores.negro
+        self.nombre.y = 140
+        self.texto_nombre = pilas.interfaz.IngresoDeTexto("Anonimo", ancho=150)
+        self.texto_nombre.y = 100
+        
         self.boton_servidor = pilas.interfaz.Boton("Servidor")
-        self.boton_servidor.y = 100
         self.boton_servidor.conectar(self.conectar_servidor)
         
-        self.texto_ip_servidor = pilas.interfaz.IngresoDeTexto(obteber_ip_local())
+        self.texto_ip_servidor = pilas.interfaz.IngresoDeTexto(obteber_ip_local(), ancho=200)
+        self.texto_ip_servidor.y = -110                
         
         self.boton_cliente = pilas.interfaz.Boton("Cliente")
-        self.boton_cliente.y = -50
+        self.boton_cliente.y = -80
         self.boton_cliente.conectar(self.conectar_cliente)
         
     def conectar_servidor(self):
