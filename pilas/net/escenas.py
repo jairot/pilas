@@ -32,7 +32,7 @@ class CanalCliente(Channel):
         self._server.enviar_al_resto(data, self)
         # El servidor se guarda la referencia del ID del Actor y que Cliente 
         # lo ha creado.
-        self._server.actores.append({"id" : data['id'], "cliente" : self.addr})
+        self._server.actores.append({"id" : data['id'], "cliente" : self})
 
     def Network_mover_actor(self, data):
         """ Manda la acción de mover un actor en el resto de Clientes """
@@ -85,7 +85,7 @@ class ServidorPilas(Server):
     def eliminar_cliente(self, cliente):
         print "Eliminando Cliente " + str(cliente.addr)
         for actor in self.actores:
-            if (actor['cliente'] == cliente.addr):
+            if (actor['cliente'].addr == cliente.addr):
                 self.enviar_al_resto({"action" : "eliminar_actor", 
                                       "id" : actor['id'],
                                       "control" : Actor.REMOTO,
@@ -114,9 +114,7 @@ class ServidorPilas(Server):
     def enviar_a_propietario_actor_puntos(self, data):
         for actor in self.actores:            
             if (actor['id'] == data['id']):
-                for c in self._clientes:
-                    if (c.addr == actor['cliente']):
-                        c.Send(data)
+                actor['cliente'].Send(data)
                 break
         
 class ActorObserver():

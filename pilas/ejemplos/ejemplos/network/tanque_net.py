@@ -6,6 +6,12 @@
 #
 # website - http://www.pilas-engine.com.ar
 
+# Permite que este ejemplo funcion incluso si no has instalado pilas.
+
+import sys
+
+sys.path.insert(0, "../../../..")
+
 import random
 
 import pilas
