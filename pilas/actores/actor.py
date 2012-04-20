@@ -85,7 +85,7 @@ class Actor(object, Estudiante):
         self.anexados = []
         
  
-    # Obervado
+    # Observado
     # -------------------------
     def conectarObservador(self, listener):
         self.listeners.append(listener)
