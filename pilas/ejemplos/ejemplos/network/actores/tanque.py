@@ -41,7 +41,7 @@ class Tanque(Actor):
             self.crosshair = disparo.CrossHair()
             self.anexar(self.barra_recarga)
             self.anexar(self.barra_vida)            
-            self.anexar(self.barra_vida)
+            self.anexar(self.crosshair)
     
     def set_id(self, id):
         self.id = id
