@@ -282,11 +282,26 @@ class EscenaNetwork(Normal, EscucharServidor, ActorObserver):
     
     def escena_ganador(self):
         """ Muestra la escena del ganador y notifica a los perdedores. """
+        for actor in self._actores_locales:
+            actor.destruir()
+        for actor in self._actores_remotos:
+            actor.destruir()
+
+        
         connection.Send({"action" : "notificar_perdedores"})
+        
+        connection.Pump()
+        self.Pump()
+        
         Escena_Ganador()
     
     def escena_perdedor(self):
         """ Muestra la escena del pededor """
+        for actor in self._actores_locales:
+            actor.destruir()
+        for actor in self._actores_remotos:
+            actor.destruir()
+            
         Escena_Perdedor()
 
     def enviar_a_propietario_actor_puntos(self, actor, puntos=1):
