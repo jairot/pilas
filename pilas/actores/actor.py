@@ -95,8 +95,7 @@ class Actor(object, Estudiante):
     
     def notificarObservadores(self):
         for listener in self.listeners:            
-            listener.cambioEnActor({"action": "mover_actor",
-                                    "id": self.id, 
+            listener.cambioEnActor({"id": self.id, 
                                     "x" : self.x, 
                                     "y" : self.y,
                                     "escala_x" : self.escala_x,
