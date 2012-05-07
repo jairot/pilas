@@ -17,7 +17,7 @@ import random
 import pilas
 from pilas.escenas import Normal
 from pilas.actores import *
-from pilas.net import *
+from pilas.red import *
 
 import actores
 from actores.tanque import Tanque
@@ -33,7 +33,7 @@ class Escena_Parametros(Normal):
         pilas.fondos.Selva()
         
         # Titulo
-        self.titulo = pilas.actores.Texto("Tanques Net")
+        self.titulo = pilas.actores.Texto("Tanques en Red")
         self.titulo.y = 220
 
         # Nombre jugador
@@ -59,10 +59,10 @@ class Escena_Parametros(Normal):
     def conectar_cliente(self):
         MiEscena('cliente', ip_servidor=self.texto_ip_servidor.texto)
 
-class MiEscena(EscenaNetwork):
+class MiEscena(EscenaRed):
     
     def __init__(self, rol, ip_servidor=obteber_ip_local()):
-        EscenaNetwork.__init__(self,rol,ip_servidor=ip_servidor)
+        EscenaRed.__init__(self,rol,ip_servidor=ip_servidor)
         pilas.fondos.Pasto()
         
         self.crear_tanque()
@@ -70,6 +70,7 @@ class MiEscena(EscenaNetwork):
         self.puntaje = pilas.actores.Puntaje(x=-300,y=220)
         
     def crear_tanque(self):
+        
         rand_x = random.randint(-320,320)
         rand_y = random.randint(-240,240)
         self.mi_tanque = actores.tanque.Tanque(x=rand_x, y=rand_y)
@@ -160,13 +161,13 @@ class MiEscena(EscenaNetwork):
         if (self.puntos == 40):
             self.escena_ganador()
         
-        EscenaNetwork.actualizar(self, evento)
+        EscenaRed.actualizar(self, evento)
     
     def eliminar_bala(self, datos_evento):       
         self.eliminar_actor_local(datos_evento['bala'], notificar=False ,destruir=True)
                 
 
-pilas.iniciar(titulo="Tanques Net")
+pilas.iniciar(titulo="Tanques en Red")
 
 Escena_Parametros()
 
