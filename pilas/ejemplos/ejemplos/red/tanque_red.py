@@ -30,7 +30,7 @@ class Escena_Parametros(Normal):
     
     def __init__(self):
         Normal.__init__(self)
-        pilas.fondos.Selva()
+        pilas.fondos.Pasto()
         
         # Titulo
         self.titulo = pilas.actores.Texto("Tanques en Red")

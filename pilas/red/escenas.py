@@ -148,7 +148,8 @@ class _EscucharServidor(ConnectionListener):
         """ Crea un actor de otro Cliente """
         exec("from  " + data['modulo'] + " import " + data['clase'])
         clase_actor = eval(data['clase'])
-        actor = clase_actor(control=Actor.REMOTO)
+        actor = clase_actor()
+        actor.control = Actor.REMOTO
         actor.id = data['id']
         actor.x = data['x']
         actor.y = data['y']
