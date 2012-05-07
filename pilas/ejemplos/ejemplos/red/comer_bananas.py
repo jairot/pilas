@@ -33,6 +33,13 @@ class Escena_Parametros(Normal):
         self.titulo.color = pilas.colores.negro
         self.titulo.y = 180
 
+        # Nombre jugador
+        self.nombre = pilas.actores.Texto("Nick:")
+        self.nombre.color = pilas.colores.negro
+        self.nombre.y = 140
+        self.texto_nombre = pilas.interfaz.IngresoDeTexto("Jugador", ancho=150)
+        self.texto_nombre.y = 100
+
         self.boton_servidor = pilas.interfaz.Boton("Servidor")
         self.boton_servidor.conectar(self.conectar_servidor)
         
@@ -47,13 +54,15 @@ class Escena_Parametros(Normal):
         ComerBananas(pilas.red.SERVIDOR)
         
     def conectar_cliente(self):
-        ComerBananas(pilas.red.CLIENTE, ip_servidor=self.texto_ip_servidor.texto)
+        ComerBananas(pilas.red.CLIENTE, 
+                     ip_servidor=self.texto_ip_servidor.texto, 
+                     nickname=self.texto_nombre.texto)
 
 
 class ComerBananas(EscenaRed):
     
-    def __init__(self, rol, ip_servidor=obteber_ip_local()):
-        EscenaRed.__init__(self,rol,ip_servidor=ip_servidor)
+    def __init__(self, rol, ip_servidor=obteber_ip_local(), nickname="Anomimo"):
+        EscenaRed.__init__(self,rol,ip_servidor=ip_servidor,nickname=nickname)
         
         pilas.fondos.Selva()
         
@@ -102,7 +111,8 @@ class ComerBananas(EscenaRed):
         if not(self.soy_cliente()):
             aleatorio = random.randint(0,100)
             if (aleatorio == 50 ):
-                self.crear_banana()
+                if (self.obtener_numero_jugadores_actual() >= 2):
+                    self.crear_banana()
         
         self.puntaje.texto = "Puntos:" + str(self.puntos)
         if (self.puntos == 10):

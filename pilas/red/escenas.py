@@ -26,7 +26,12 @@ class _CanalCliente(Channel):
     """
     def __init__(self, *args, **kwargs):
         Channel.__init__(self, *args, **kwargs)
+        self.nickname = "Anonimo"
             
+    def Network_nickname(self, data):
+        self.nickname = data['nickname']
+        self._server.enviar_jugadores()
+
     def Network_crear_actor(self, data):
         """ Envia al resto de Clientes la creación de un Actor """
         # Enviamos el comando al resto de clientes.
@@ -56,7 +61,7 @@ class _CanalCliente(Channel):
     def Network_notificar_perdedores(self, data):
         """ Notifica al resto de clientes que son los perdedores """
         self._server.enviar_al_resto(data, self)
-    
+                
     def Close(self):
         """ Cierra la conexion con el servidor """
         self._server.eliminar_cliente(self)
@@ -82,7 +87,11 @@ class _ServidorPilas(Server):
     def Connected(self, channel, addr):
         #print "Cliente agregado"
         self.agregar_Cliente(channel)
-            
+        self.enviar_jugadores()
+    
+    def enviar_jugadores(self):
+        self.enviar_a_todos({"action": "jugadores", "jugadores": [p.nickname for p in self._clientes]})
+    
     def agregar_Cliente(self, cliente):
         #print "Nuevo Cliente " + str(cliente.addr)
         self._clientes[cliente] = True
@@ -143,6 +152,9 @@ class _EscucharServidor(ConnectionListener):
         
     def Network_error(self, data):
         pilas.avisar(data['error'][1])
+
+    def Network_jugadores(self, data):
+        self.jugadores = data['jugadores']
 
     def Network_crear_actor(self, data):
         """ Crea un actor de otro Cliente """
@@ -235,7 +247,7 @@ class EscenaRed(Normal, _EscucharServidor, _ActorObserver):
     """    
     
     def __init__(self, rol="cliente", ip_servidor='127.0.0.1', 
-                 puerto_servidor=31425):
+                 puerto_servidor=31425, nickname="Anonimo"):
         
         Normal.__init__(self)
         
@@ -262,7 +274,9 @@ class EscenaRed(Normal, _EscucharServidor, _ActorObserver):
                                        self._actores_locales, 
                                        self.colision_con_actores_locales)
 
-                
+        
+        self.nickname = nickname
+        
         self.servidor = None
         # Si la escena es un servidor, lo creamos.
         if (rol == pilas.red.SERVIDOR):
@@ -271,6 +285,11 @@ class EscenaRed(Normal, _EscucharServidor, _ActorObserver):
         # Conectamos con el servidor.
         self.Connect((ip_servidor, puerto_servidor))
         
+        self.enviar_nickname()
+    
+    def enviar_nickname(self):
+        connection.Send({"action": "nickname", "nickname": self.nickname})
+    
     def aumentar_puntos(self, cantidad):
         """ Aumenta los puntos del jugador """
         self.puntos += cantidad
@@ -397,6 +416,9 @@ class EscenaRed(Normal, _EscucharServidor, _ActorObserver):
                              "id" : id,
                              "control" :  actor_remoto.control,
                              "destruir" : destruir})
+
+    def obtener_numero_jugadores_actual(self):
+        return len(self.jugadores)
 
     def cambioEnActor(self, data):
         """ Si han habido cambios en un actor local lo notifica a los clientes
