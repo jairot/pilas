@@ -54,10 +54,10 @@ class Escena_Parametros(Normal):
         self.boton_cliente.conectar(self.conectar_cliente)
         
     def conectar_servidor(self):
-        MiEscena('servidor')
+        MiEscena(pilas.red.SERVIDOR)
         
     def conectar_cliente(self):
-        MiEscena('cliente', ip_servidor=self.texto_ip_servidor.texto)
+        MiEscena(pilas.red.CLIENTE, ip_servidor=self.texto_ip_servidor.texto)
 
 class MiEscena(EscenaRed):
     

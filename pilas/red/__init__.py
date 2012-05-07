@@ -6,8 +6,12 @@
 #
 # website - http://www.pilas-engine.com.ar
 import socket
-from escenas import ServidorPilas
+#from escenas import ServidorPilas
 from escenas import EscenaRed
+
+CLIENTE = "cliente"
+SERVIDOR = "servidor"
+
 
 def obteber_ip_local():
     return socket.gethostbyname(socket.gethostname())

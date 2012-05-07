@@ -7,6 +7,7 @@
 # website - http://www.pilas-engine.com.ar
 
 import pilas
+import pilas.red
 from pilas.escenas import Normal
 from pilas.actores import Actor
 
@@ -18,7 +19,7 @@ from weakref import WeakKeyDictionary
 
 import uuid    
 
-class CanalCliente(Channel):
+class _CanalCliente(Channel):
     """
     Esta es la representación de canal de comunicación con el Cliente.
     Aquí estan las posibles llamadas que hacen los Clientes al servidor.
@@ -61,13 +62,13 @@ class CanalCliente(Channel):
         self._server.eliminar_cliente(self)
 
 
-class ServidorPilas(Server):
+class _ServidorPilas(Server):
     """
     Clase que controla el flujo de las conexiones con los 
     distintos clientes 
     """
 
-    channelClass = CanalCliente
+    channelClass = _CanalCliente
     
     def __init__(self, puerto_servidor=31425):
         Server.__init__(self, localaddr=(pilas.red.obteber_ip_local(), puerto_servidor))
@@ -122,17 +123,17 @@ class ServidorPilas(Server):
                 actor['cliente'].Send(data)
                 break
         
-class ActorObserver():
+class _ActorObserver():
     def cambioEnActor(self, event):
         raise NotImplementedError("Debe implementar el metodo cambioEnActor " +
                                   "para Observar los cambios de los actores.")
 
-class EscucharServidor(ConnectionListener):
+class _EscucharServidor(ConnectionListener):
     """ 
     Clase que implementa las peticiones que le llegan desde el servidor.    
     """
     def Network(self, data):
-        pass #print 'network data:', data
+        pass
             
     def Network_connected(self, data):
         pilas.avisar("Conectado al servidor")
@@ -213,26 +214,26 @@ class EscucharServidor(ConnectionListener):
         """ Muestra la escena por haber perdido """
         self.escena_perdedor()
 
-class EscenaRed(Normal, EscucharServidor, ActorObserver):
+class EscenaRed(Normal, _EscucharServidor, _ActorObserver):
     """ Clase para crear una escena que permite jugar en red.
     Se debe indicar si se quiere ser cliente o servidor mediante el parametro
     "rol" que se pasa al constructor.
     
     SERVIDOR
-    EscenaRed.__init__(self,'servidor', ip_servidor=192.168.0.30)
+    EscenaRed.__init__(self, pilas.red.SERVIDOR, ip_servidor=192.168.0.30)
     
     CLIENTE
-    EscenaRed.__init__(self,'cliente', ip_servidor=192.168.0.30)
+    EscenaRed.__init__(self, pilas.red.CLIENTE, ip_servidor=192.168.0.30)
     
     También se puede establecer el puerto donde escuchará el servidor y por el
     que deberá conectar el cliente mediante el parametro "puerto_servidor".
+    Por defecto el puerto es el 31425.
     
-    Podemos obtener la ip local mediante:
-    pilas.net.obteber_ip_local()
+    Podemos obtener la ip local mediante pilas.net.obteber_ip_local()
     
     """    
     
-    def __init__(self, rol='cliente', ip_servidor='127.0.0.1', 
+    def __init__(self, rol="cliente", ip_servidor='127.0.0.1', 
                  puerto_servidor=31425):
         
         Normal.__init__(self)
@@ -263,8 +264,8 @@ class EscenaRed(Normal, EscucharServidor, ActorObserver):
                 
         self.servidor = None
         # Si la escena es un servidor, lo creamos.
-        if (rol == 'servidor'):
-            self.servidor = ServidorPilas(puerto_servidor=31425)
+        if (rol == pilas.red.SERVIDOR):
+            self.servidor = _ServidorPilas(puerto_servidor=31425)
 
         # Conectamos con el servidor.
         self.Connect((ip_servidor, puerto_servidor))
