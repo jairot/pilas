@@ -70,7 +70,7 @@ class Actor(object, Estudiante):
         self.control = control
         
         # Observadores
-        self.listeners = []
+        self.observadores = []
 
         self.x = x
         self.y = y
@@ -88,19 +88,14 @@ class Actor(object, Estudiante):
     # Observado
     # -------------------------
     def conectarObservador(self, listener):
-        self.listeners.append(listener)
+        self.observadores.append(listener)
     
     def desconectarObservador(self, listener):
-        self.listeners.remove(listener)
+        self.observadores.remove(listener)
     
     def notificarObservadores(self):
-        for listener in self.listeners:            
-            listener.cambioEnActor({"id": self.id, 
-                                    "x" : self.x, 
-                                    "y" : self.y,
-                                    "escala_x" : self.escala_x,
-                                    "escala_y" : self.escala_y,
-                                    "rotacion" : self.rotacion})
+        for listener in self.observadores:            
+            listener.cambio_en_actor(self)
     # -------------------------
     
     def definir_centro(self, (x, y)):

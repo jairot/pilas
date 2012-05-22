@@ -20,7 +20,7 @@ class Disparo(Actor):
         self.radio_de_colision = 4
         self.tiempo_activo = 100
         self.rotacion = rotacion   
-        self.listeners = []
+        self.observadores = []
         
         self.evento_destruir = pilas.eventos.Evento("Destruir Disparo")   
 

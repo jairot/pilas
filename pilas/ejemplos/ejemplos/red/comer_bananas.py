@@ -68,6 +68,7 @@ class ComerBananas(EscenaRed):
         
         self.crear_mono()
         
+        self.puntos = 0
         self.puntaje = pilas.actores.Puntaje(x=-300,y=220)
         
     def crear_mono(self):

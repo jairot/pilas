@@ -133,7 +133,7 @@ class _ServidorPilas(Server):
                 break
         
 class _ActorObserver():
-    def cambioEnActor(self, event):
+    def cambio_en_actor(self, event):
         raise NotImplementedError("Debe implementar el metodo cambioEnActor " +
                                   "para Observar los cambios de los actores.")
 
@@ -420,11 +420,19 @@ class EscenaRed(Normal, _EscucharServidor, _ActorObserver):
     def obtener_numero_jugadores_actual(self):
         return len(self.jugadores)
 
-    def cambioEnActor(self, data):
+    def cambio_en_actor(self, actor):
         """ Si han habido cambios en un actor local lo notifica a los clientes
         para que efectuen la actualizacion """
-        accion = {"action": "mover_actor"}
-        connection.Send (dict(accion.items() + data.items()))
+        
+        accion = {"action": "mover_actor",
+                  "id": actor.id,
+                  "x" : actor.x,
+                  "y" : actor.y,
+                  "escala_x" : actor.escala_x,
+                  "escala_y" : actor.escala_y,
+                  "rotacion" : actor.rotacion}
+        
+        connection.Send(accion)
              
     def actualizar(self, evento):
         # Actualizamos el servidor si existe.
