@@ -93,8 +93,8 @@ class CanvasWidget(QGLWidget):
                     if not actor.esta_fuera_de_la_pantalla():
                         actor.dibujar(self.painter)
                 except Exception:
-                    print(traceback.format_exc())
-                    print(sys.exc_info()[0])
+                    print((traceback.format_exc()))
+                    print((sys.exc_info()[0]))
                     actor.eliminar()
 
                 self.depurador.dibuja_al_actor(self.motor, self.painter, actor)
@@ -111,8 +111,8 @@ class CanvasWidget(QGLWidget):
         try:
             self._realizar_actualizacion_logica()
         except Exception:
-            print(traceback.format_exc())
-            print(sys.exc_info()[0])
+            print((traceback.format_exc()))
+            print((sys.exc_info()[0]))
 
         self.update()
 
@@ -133,8 +133,8 @@ class CanvasWidget(QGLWidget):
                 actor.pre_actualizar()
                 actor.actualizar()
         except Exception:
-            print(traceback.format_exc())
-            print(sys.exc_info()[0])
+            print((traceback.format_exc()))
+            print((sys.exc_info()[0]))
 
     def mouseMoveEvent(self, e):
         escala = self.escala

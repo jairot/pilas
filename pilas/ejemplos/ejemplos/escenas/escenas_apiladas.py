@@ -59,7 +59,7 @@ seguira en la misma posicion donde la dejaste.")
         if evento.texto == '2':
             pilas.almacenar_escena(Escena_2())
         if evento.texto == 'a':
-            print(self.actores)
+            print((self.actores))
 
 
 class Escena_2(pilas.escena.Normal):

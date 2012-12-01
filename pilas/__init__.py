@@ -152,7 +152,7 @@ def _crear_motor(usar_motor, permitir_depuracion, audio):
 
         motor = motor_qt.Motor(usar_motor, permitir_depuracion, audio)
     else:
-        print("El motor multimedia seleccionado (%s) no esta disponible" %(usar_motor))
+        print(("El motor multimedia seleccionado (%s) no esta disponible" %(usar_motor)))
         print("Las opciones de motores que puedes probar son 'qt', 'qtgl', 'qtwidget', 'qtsugar' y 'qtsugargl'.")
         motor = None
 

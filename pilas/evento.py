@@ -72,7 +72,7 @@ class Evento():
             print("\t << sin funciones conectadas >>")
         else:
             for x in self.respuestas:
-                print("\t +", x.nombre, " en ", x.receptor)
+                print(("\t +", x.nombre, " en ", x.receptor))
 
 
 class AttrDict(dict):

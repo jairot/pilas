@@ -196,7 +196,7 @@ class Tween(object):
  
         # check that its compatible
             if not hasattr( self.target, k):
-                print("TWEEN ERROR: " + str(self.target) + " has no function " + k)
+                print(("TWEEN ERROR: " + str(self.target) + " has no function " + k))
                 self.complete = True
                 break
  
@@ -718,7 +718,7 @@ class TweenTestObject:
         self.rot = 50
  
     def update(self):
-        print(self.pos, self.rot)
+        print((self.pos, self.rot))
  
     def setRotation(self, rot):
         self.rot = rot
@@ -752,6 +752,6 @@ if __name__=="__main__":
             T.addTween( mt, duration=-0.2, tweenTime=0.2 )
             changed = True
         #print mt.duration,
-        print(tst.getRotation(), tst.pos)
+        print((tst.getRotation(), tst.pos))
         time.sleep(0.06)
-    print(tst.getRotation(), tst.pos)
+    print((tst.getRotation(), tst.pos))

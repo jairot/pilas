@@ -100,7 +100,7 @@ class VentanaAsistente(Ui_AsistenteWindow):
             import webbrowser
             webbrowser.open("http://www.pilas-engine.com.ar")
         else:
-            print(seccion, "es una opcion desconocida")
+            print((seccion, "es una opcion desconocida"))
 
     def _cuando_selecciona_ejemplos(self):
         cargador.main(self.main)

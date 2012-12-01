@@ -66,7 +66,7 @@ class IngresoDeTexto(BaseInterfaz):
                     if (self.caracteres_permitidos.match(evento.texto)):
                         self.texto = self.texto + evento.texto
                     else:
-                        print("Rechazando el ingreso del caracter:", evento.texto)
+                        print(("Rechazando el ingreso del caracter:", evento.texto))
                 else:
                     print("Rechazando caracter por llegar al limite.")
 
