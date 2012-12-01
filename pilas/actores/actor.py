@@ -16,7 +16,7 @@ CENTRO = ["centro", "centrado", "medio", "arriba"]
 ABAJO = ["abajo", "inferior", "debajo"]
 
 
-class Actor(object, Estudiante):
+class Actor(Estudiante, object):
     """Representa un objeto visible en pantalla, algo que se ve y tiene
     posicion.
 
