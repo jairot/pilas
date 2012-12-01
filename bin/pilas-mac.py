@@ -14,6 +14,7 @@ import os
 sys.path.append('..')
 
 from optparse import OptionParser
+import six
 import pilas
 
 analizador = OptionParser()
@@ -26,7 +27,7 @@ analizador.add_option("-i", "--interprete", dest="interprete",
 
 if argumentos:
     os.chdir(os.path.dirname(argumentos[0]))
-    sys.exit(execfile(argumentos[0]))
+    sys.exit(six.exec_(compile(open(argumentos[0]).read(), argumentos[0], 'exec')))
 
 if opciones.interprete or '-i' in sys.argv:
     from PyQt4 import QtGui
@@ -34,6 +35,6 @@ if opciones.interprete or '-i' in sys.argv:
     app.setApplicationName("pilas-engine 2")
     pilas.abrir_interprete(do_raise=True)
 elif argumentos:
-    sys.exit(execfile(argumentos[0]))
+    sys.exit(six.exec_(compile(open(argumentos[0]).read(), argumentos[0], 'exec')))
 else:
     pilas.abrir_asistente()

@@ -47,8 +47,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Pilas engine'
-copyright = u'2011, Hugo Ruscitti'
+project = 'Pilas engine'
+copyright = '2011, Hugo Ruscitti'
 
 
 
@@ -116,7 +116,7 @@ html_theme_path = ['../themes']
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-html_title = u"Documentación de Pilas Engine"
+html_title = "Documentación de Pilas Engine"
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #html_short_title = None
@@ -192,8 +192,8 @@ latex_paper_size = 'a4'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'Pilasengine.tex', u'Pilas Engine Documentation',
-   u'Hugo Ruscitti', 'manual'),
+  ('index', 'Pilasengine.tex', 'Pilas Engine Documentation',
+   'Hugo Ruscitti', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -225,8 +225,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'pilasengine', u'Pilas Engine Documentation',
-     [u'Hugo Ruscitti'], 1)
+    ('index', 'pilasengine', 'Pilas Engine Documentation',
+     ['Hugo Ruscitti'], 1)
 ]
 
 def skip(app, what, name, obj, skip, options):
