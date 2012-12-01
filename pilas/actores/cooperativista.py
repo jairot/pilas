@@ -30,7 +30,7 @@ class Cooperativista(Actor):
         self.radio_de_colision = 30
 
     def _cargar_animaciones(self):
-	    """ Carga las animaciones del actor. """
+        """ Carga las animaciones del actor. """
         cargar = pilas.imagenes.cargar_grilla
         self.animaciones = {
             "ok": cargar("cooperativista/ok.png", 1),
@@ -44,11 +44,11 @@ class Cooperativista(Actor):
             }
 
     def definir_cuadro(self, indice):
-	    """ Define el cuadro de la animación del actor."""
+        """ Define el cuadro de la animación del actor."""
         self.imagen.definir_cuadro(indice)
 
     def cambiar_animacion(self, nombre):
-	    """ Cambia la animación del Cooperativista."""
+        """ Cambia la animación del Cooperativista."""
         self.imagen = self.animaciones[nombre]
         self.centro = ("centro", "abajo")
 
