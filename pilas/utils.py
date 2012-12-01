@@ -107,7 +107,7 @@ def interpolable(f):
 
         if isinstance(value, list):
             value = interpolar(value, duracion=duracion, tipo='lineal')
-        elif isinstance(value, xrange):
+        elif isinstance(value, range):
             value = interpolar(list(value), duracion=duracion, tipo='lineal')
 
         if es_interpolacion(value):
