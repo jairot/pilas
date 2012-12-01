@@ -56,10 +56,10 @@ seguira en la misma posicion donde la dejaste.")
         pilas.cambiar_escena(EscenaDeMenu())
 
     def cuando_pulsa_tecla(self, evento):
-        if evento.texto == u'2':
+        if evento.texto == '2':
             pilas.almacenar_escena(Escena_2())
-        if evento.texto == u'a':
-            print self.actores
+        if evento.texto == 'a':
+            print(self.actores)
 
 
 class Escena_2(pilas.escena.Normal):

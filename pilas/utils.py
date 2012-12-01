@@ -5,9 +5,9 @@
 # License: LGPLv3 (see http://www.gnu.org/licenses/lgpl.html)
 #
 # Website - http://www.pilas-engine.com.ar
-from __future__ import division
+
 import os
-import interpolaciones
+from . import interpolaciones
 import sys
 import subprocess
 import math
@@ -66,8 +66,10 @@ def distancia(a, b):
     "Retorna la distancia entre dos numeros."
     return abs(b - a)
 
-def distancia_entre_dos_puntos((x1, y1), (x2, y2)):
+def distancia_entre_dos_puntos(xxx_todo_changeme, xxx_todo_changeme1):
     "Retorna la distancia entre dos puntos en dos dimensiones."
+    (x1, y1) = xxx_todo_changeme
+    (x2, y2) = xxx_todo_changeme1
     return math.sqrt(distancia(x1, x2) ** 2 + distancia(y1, y2) ** 2)
 
 def distancia_entre_dos_actores(a, b):
@@ -125,13 +127,13 @@ def hacer_coordenada_pantalla_absoluta(x, y):
 def listar_actores_en_consola():
     todos = pilas.escena_actual().actores
 
-    print "Hay %d actores en la escena:" %(len(todos))
-    print ""
+    print("Hay %d actores en la escena:" %(len(todos)))
+    print("")
 
     for s in todos:
-        print "\t", s
+        print("\t", s)
 
-    print ""
+    print("")
 
 def obtener_angulo_entre(punto_a, punto_b):
     (x, y) = punto_a
@@ -172,7 +174,7 @@ def interpolar(valor_o_valores, duracion=1, demora=0, tipo='lineal'):
     """
 
 
-    import interpolaciones
+    from . import interpolaciones
 
     algoritmos = {
             'lineal': interpolaciones.Lineal,
@@ -184,7 +186,7 @@ def interpolar(valor_o_valores, duracion=1, demora=0, tipo='lineal'):
             'elastico_final': interpolaciones.ElasticoFinal
             }
 
-    if algoritmos.has_key(tipo):
+    if tipo in algoritmos:
         clase = algoritmos[tipo]
     else:
         raise ValueError("El tipo de interpolacion %s es invalido" %(tipo))
@@ -209,7 +211,7 @@ def deneter_interpolacion(objeto, propiedad):
         getattr(objeto, setter)
         pilas.escena_actual().tweener.removeTweeningFromObjectField(objeto, setter)
     except:
-        print "El obejto %s no tiene esa propiedad %s" %(objeto.__class__.__name__, setter)
+        print("El obejto %s no tiene esa propiedad %s" %(objeto.__class__.__name__, setter))
 
 def obtener_area():
     "Retorna el area que ocupa la ventana"
@@ -224,40 +226,40 @@ def obtener_area_de_texto(texto):
     return pilas.mundo.motor.obtener_area_de_texto(texto)
 
 def realizar_pruebas():
-    print "Realizando pruebas de dependencias:"
-    print ""
+    print("Realizando pruebas de dependencias:")
+    print("")
 
-    print "Box 2D:",
+    print("Box 2D:", end=' ')
 
     if pilas.fisica.obtener_version().startswith("2.1"):
-        print "OK, versión", pilas.fisica.obtener_version()
+        print("OK, versión", pilas.fisica.obtener_version())
     else:
-        print "Error -> la versión está obsoleta, instale una versión de la serie 2.1"
+        print("Error -> la versión está obsoleta, instale una versión de la serie 2.1")
 
-    print "pyqt:",
+    print("pyqt:", end=' ')
 
     try:
         from PyQt4 import Qt
-        print "OK, versión", Qt.PYQT_VERSION_STR
+        print("OK, versión", Qt.PYQT_VERSION_STR)
     except ImportError:
-        print "Error -> no se encuentra pyqt."
+        print("Error -> no se encuentra pyqt.")
 
-    print "pyqt con aceleracion:",
+    print("pyqt con aceleracion:", end=' ')
 
     try:
         from PyQt4 import QtOpenGL
         from PyQt4.QtOpenGL import QGLWidget
-        print "OK"
+        print("OK")
     except ImportError:
-        print "Error -> no se encuentra pyqt4gl."
+        print("Error -> no se encuentra pyqt4gl.")
 
-    print "PIL para soporte de jpeg (opcional):",
+    print("PIL para soporte de jpeg (opcional):", end=' ')
 
     try:
         from PIL import Image
-        print "OK"
+        print("OK")
     except ImportError:
-        print "Cuidado -> no se encuentra PIL."
+        print("Cuidado -> no se encuentra PIL.")
 
 def ver_codigo(objeto, imprimir, retornar):
     """Imprime en pantalla el codigo fuente asociado a un objeto."""
@@ -269,7 +271,7 @@ def ver_codigo(objeto, imprimir, retornar):
         codigo = inspect.getsource(objeto)
 
     if imprimir:
-        print codigo
+        print(codigo)
 
     if retornar:
         return codigo
@@ -291,7 +293,7 @@ def centrar_ventana(widget):
     widget.move(desktop.screen().rect().center() - widget.rect().center())
 
 def descargar_archivo_desde_internet(parent, url, archivo_destino):
-    import descargar
+    from . import descargar
     ventana = descargar.Descargar(parent, url, archivo_destino)
     ventana.show()
 
@@ -303,9 +305,9 @@ def imprimir_todos_los_eventos():
         attributo = getattr(pilas.escena_actual(), x)
 
         if isinstance(attributo, pilas.evento.Evento):
-            print "Evento:", attributo.nombre
+            print("Evento:", attributo.nombre)
             attributo.imprimir_funciones_conectadas()
-            print ""
+            print("")
 
 def habilitar_depuracion():
     """Permite habilitar un breakpoint para depuracion una vez inicializado pilas."""

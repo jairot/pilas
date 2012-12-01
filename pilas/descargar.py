@@ -100,9 +100,9 @@ class Descargar(QDialog):
 
         if error:
             self.outFile.remove()
-            QMessageBox.information(self, 'Error', u'Hay un error de conexión: %s.' % self.http.errorString())
+            QMessageBox.information(self, 'Error', 'Hay un error de conexión: %s.' % self.http.errorString())
 
-        self.statusLabel.setText(u'Perfecto, ahora podrás explorar el manual.')
+        self.statusLabel.setText('Perfecto, ahora podrás explorar el manual.')
 
     def cuando_responder_header(self, responseHeader):
         if responseHeader.statusCode() not in (200, 300, 301, 302, 303, 307):

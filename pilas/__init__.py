@@ -10,21 +10,21 @@ mundo = None
 bg = None
 
 import sys
-import utils
-from mundo import Mundo
-import actores
-import escena
-import escenas
-import fondos
-import habilidades
-import sonidos
-import musica
-import colores
-import demos
-import atajos
-import interfaz
-import interprete
-import municion
+from . import utils
+from .mundo import Mundo
+from . import actores
+from . import escena
+from . import escenas
+from . import fondos
+from . import habilidades
+from . import sonidos
+from . import musica
+from . import colores
+from . import demos
+from . import atajos
+from . import interfaz
+from . import interprete
+from . import municion
 from pilas.escena import Normal
 
 # Permite cerrar el programa usando CTRL+C
@@ -100,7 +100,7 @@ def iniciar_con_lanzador(ancho=640, alto=480, titulo='Pilas',
     Esta función es útil cuando se quiere distribuir un juego y no se conoce
     exáctamente el equipo del usuario.
     """
-    import lanzador
+    from . import lanzador
 
     usar_motor, pantalla_completa, audio = lanzador.ejecutar(imagen, titulo)
     iniciar(ancho, alto, titulo, usar_motor, rendimiento, modo, gravedad, pantalla_completa, permitir_depuracion, audio)
@@ -115,7 +115,7 @@ def abrir_asistente():
     Esta ventana se ha diseñado para mostrarse a los nuevos usuarios
     de pilas, por ejemplo cuando eligen abrir pilas desde el icono principal.
     """
-    import asistente
+    from . import asistente
     asistente.ejecutar()
 
 def ejecutar(ignorar_errores=False):
@@ -135,7 +135,7 @@ def ver(objeto, imprimir=True, retornar=False):
 
 def version():
     """Retorna el número de version de pilas."""
-    import pilasversion
+    from . import pilasversion
     return pilasversion.VERSION
 
 def _crear_motor(usar_motor, permitir_depuracion, audio):
@@ -145,15 +145,15 @@ def _crear_motor(usar_motor, permitir_depuracion, audio):
     excepto por el mismo motor pilas."""
 
     if usar_motor in ['qt', 'qtgl', 'qtwidget', 'qtsugar', 'qtsugargl']:
-        from motores import motor_qt
+        from .motores import motor_qt
 
         if _usa_interprete_lanas():
             usar_motor = 'qtsugar'
 
         motor = motor_qt.Motor(usar_motor, permitir_depuracion, audio)
     else:
-        print "El motor multimedia seleccionado (%s) no esta disponible" %(usar_motor)
-        print "Las opciones de motores que puedes probar son 'qt', 'qtgl', 'qtwidget', 'qtsugar' y 'qtsugargl'."
+        print("El motor multimedia seleccionado (%s) no esta disponible" %(usar_motor))
+        print("Las opciones de motores que puedes probar son 'qt', 'qtgl', 'qtwidget', 'qtsugar' y 'qtsugargl'.")
         motor = None
 
     return motor
@@ -161,7 +161,7 @@ def _crear_motor(usar_motor, permitir_depuracion, audio):
 def _usa_interprete_lanas():
     "Retorna True si se ha iniciado pilas desde lanas"
     import os
-    return os.environ.has_key('lanas')
+    return 'lanas' in os.environ
 
 def reiniciar():
     """Elimina todos los actores y vuelve al estado inicial."""
@@ -190,11 +190,11 @@ def abrir_cargador():
     """
 
     try:
-        import ejemplos
+        from . import ejemplos
         ejemplos.ejecutar()
     except ImportError:
-        print "Lo siento, no tienes instalada la extesion de ejemplos."
-        print "Instale el paquete 'pilas-examples' para continuar."
+        print("Lo siento, no tienes instalada la extesion de ejemplos.")
+        print("Instale el paquete 'pilas-examples' para continuar.")
 
     return []
 
@@ -228,5 +228,5 @@ def recuperar_escena():
 
 # Representa el viejo acceso al modulo eventos, pero convierte cada uno
 # de los eventos en una referencia al evento dentro de la escena actual.
-from evento import ProxyEventos
+from .evento import ProxyEventos
 eventos = ProxyEventos()

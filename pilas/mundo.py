@@ -56,23 +56,23 @@ class Mundo(object):
         self.motor.deshabilitar_musica(estado)
 
     def get_tareas_deprecated(self):
-        print "CUIDADO: Acceder al atributo 'tareas' esta desaconsejado."
-        print "\t utilice en su lugar: pilas.utils.agregar_tarea, agregar_tarea_una_vez o agregar_tarea_siempre"
+        print("CUIDADO: Acceder al atributo 'tareas' esta desaconsejado.")
+        print("\t utilice en su lugar: pilas.utils.agregar_tarea, agregar_tarea_una_vez o agregar_tarea_siempre")
         return self.gestor_escenas.escena_actual().tareas
 
     def get_camara_deprecated(self):
-        print "CUIDADO: Acceder al atributo 'camara' esta desaconsejado."
-        print "\t utilice en su lugar: pilas.escena_actual().camara"
+        print("CUIDADO: Acceder al atributo 'camara' esta desaconsejado.")
+        print("\t utilice en su lugar: pilas.escena_actual().camara")
         return self.gestor_escenas.escena_actual().camara
 
     def get_colisiones_deprecated(self):
-        print "CUIDADO: Acceder al atributo 'colisiones' esta desaconsejado."
-        print "\t utilice en su lugar: pilas.escena_actual().colisiones"
+        print("CUIDADO: Acceder al atributo 'colisiones' esta desaconsejado.")
+        print("\t utilice en su lugar: pilas.escena_actual().colisiones")
         return self.gestor_escenas.escena_actual().colisiones
 
     def get_control_deprecated(self):
-        print "CUIDADO: Acceder al atributo 'control' esta desaconsejado."
-        print "\t utilice en su lugar: pilas.escena_actual().control"
+        print("CUIDADO: Acceder al atributo 'control' esta desaconsejado.")
+        print("\t utilice en su lugar: pilas.escena_actual().control")
         return self.gestor_escenas.escena_actual().control
 
     tareas = property(get_tareas_deprecated)

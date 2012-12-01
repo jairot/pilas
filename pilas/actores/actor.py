@@ -70,7 +70,7 @@ class Actor(object, Estudiante):
         if not pilas.mundo:
             mensaje = "Tiene que invocar a la funcion ``pilas.iniciar()`` " \
             "para comenzar."
-            print mensaje
+            print(mensaje)
             raise Exception(mensaje)
 
         Estudiante.__init__(self)
@@ -101,7 +101,7 @@ class Actor(object, Estudiante):
         self._dx = self.x
         self._dy = self.y
 
-    def definir_centro(self, (x, y)):
+    def definir_centro(self, xxx_todo_changeme):
         """ Define en que posición estará el centro del Actor.
 
         Se puede definir la posición mediante unas coordenadas numéricas o
@@ -120,6 +120,7 @@ class Actor(object, Estudiante):
         :param y: Coordenadas vertical en la que se establecerá el centro del Actor.
         :type y: int
         """
+        (x, y) = xxx_todo_changeme
         if type(x) == str:
             if x not in IZQUIERDA + CENTRO + DERECHA:
                 raise Exception("No puedes definir '%s' como eje horizontal." %(x))

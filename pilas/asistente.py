@@ -11,11 +11,11 @@ import os
 from PyQt4 import QtCore, QtGui, QtWebKit, QtNetwork
 import json
 
-from asistente_base import Ui_AsistenteWindow
+from .asistente_base import Ui_AsistenteWindow
 import pilas
-import utils
-import interprete
-from ejemplos import cargador
+from . import utils
+from . import interprete
+from .ejemplos import cargador
 
 class VentanaAsistente(Ui_AsistenteWindow):
 
@@ -29,7 +29,7 @@ class VentanaAsistente(Ui_AsistenteWindow):
         self._cargar_pagina_principal()
         self._deshabilitar_barras_de_scroll()
         pilas.utils.centrar_ventana(main)
-        self.statusbar.showMessage(u"Versión " + pilas.version())
+        self.statusbar.showMessage("Versión " + pilas.version())
         self._habilitar_inspector_web()
         self.salir_action.connect(self.salir_action, QtCore.SIGNAL("triggered()"), self.salir)
         self._consultar_ultima_version_del_servidor()
@@ -53,11 +53,11 @@ class VentanaAsistente(Ui_AsistenteWindow):
             if version_en_el_servidor == version_instalada:
                 mensaje = "(actualizada)"
             else:
-                mensaje = u"(desactualizada: la version %.2f ya está disponible!)" %(version_en_el_servidor)
+                mensaje = "(desactualizada: la version %.2f ya está disponible!)" %(version_en_el_servidor)
         except ValueError:
-            mensaje = u"(sin conexión a internet)"
+            mensaje = "(sin conexión a internet)"
 
-        self.statusbar.showMessage(u"Versión " + pilas.version() + " " + mensaje)
+        self.statusbar.showMessage("Versión " + pilas.version() + " " + mensaje)
 
 
     def _habilitar_inspector_web(self):
@@ -100,7 +100,7 @@ class VentanaAsistente(Ui_AsistenteWindow):
             import webbrowser
             webbrowser.open("http://www.pilas-engine.com.ar")
         else:
-            print seccion, "es una opcion desconocida"
+            print(seccion, "es una opcion desconocida")
 
     def _cuando_selecciona_ejemplos(self):
         cargador.main(self.main)
@@ -137,7 +137,7 @@ class VentanaAsistente(Ui_AsistenteWindow):
                 pilas.utils.abrir_archivo_con_aplicacion_predeterminada(ruta)
             except IOError:
                 titulo = "Error, no se encuentra el manual"
-                mensaje = u"Lo siento, no se encuentra el manual en tu equipo. ¿Quieres descargarlo?"
+                mensaje = "Lo siento, no se encuentra el manual en tu equipo. ¿Quieres descargarlo?"
                 respuesta = self._consultar(self.main, titulo, mensaje)
 
                 if respuesta == QtGui.QMessageBox.Yes:

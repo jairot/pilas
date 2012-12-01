@@ -121,9 +121,9 @@ class WidgetLog(QtGui.QMainWindow):
 
     def _obtener_diccionario(self, valor):
         if hasattr(valor, '__dict__'):
-            return valor.__dict__.items()
+            return list(valor.__dict__.items())
         elif type(valor) is dict:
-            return valor.items()
+            return list(valor.items())
 
     def _insertar_texto_en_lista(self, texto, itemPadre=None):
         if (itemPadre == None):

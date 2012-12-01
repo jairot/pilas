@@ -11,9 +11,9 @@ import pilas
 from pilas import pilasversion
 
 try:
-    import widget_log
-except ImportError, e:
-    print e
+    from . import widget_log
+except ImportError as e:
+    print(e)
     pass
 
 class DepuradorDeshabilitado(object):
@@ -129,7 +129,7 @@ class Depurador(DepuradorDeshabilitado):
     def _mostrar_posicion_del_mouse(self, painter):
         izquierda, derecha, arriba, abajo = pilas.utils.obtener_bordes()
         x, y = self.posicion_del_mouse
-        texto = u"Posición del mouse: x=%d y=%d " %(x, y)
+        texto = "Posición del mouse: x=%d y=%d " %(x, y)
         self.lienzo.texto_absoluto(painter, texto, derecha - 230, abajo + 10, color=pilas.colores.violeta)
 
     def _mostrar_cuadros_por_segundo(self, painter):

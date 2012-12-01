@@ -32,13 +32,13 @@ def convertir_a_pixels(valor):
 def crear_motor_fisica(area, gravedad):
     if __enabled__:
         if obtener_version().startswith('2.0'):
-            print "Los siento, el soporte para Box2D version 2.0 se ha eliminado."
-            print "Por favor actualice Box2D a la version 2.1 (ver http://www.pilas-engine.com.ar)."
+            print("Los siento, el soporte para Box2D version 2.0 se ha eliminado.")
+            print("Por favor actualice Box2D a la version 2.1 (ver http://www.pilas-engine.com.ar).")
             return FisicaDeshabilitada(area, gravedad)
         else:
             return Fisica(area, gravedad)
     else:
-        print "No se pudo iniciar Box2D, se deshabilita el soporte de Fisica."
+        print("No se pudo iniciar Box2D, se deshabilita el soporte de Fisica.")
         return FisicaDeshabilitada(area, gravedad)
 
 def obtener_version():
@@ -143,7 +143,7 @@ class Fisica(object):
                     lienzo.circulo(motor, x, y, shape.radius * PPM, pilas.colores.rojo, grosor=grosor)
                 else:
                     # TODO: implementar las figuras de tipo "edge" y "loop".
-                    print "no puedo identificar el tipo de figura."
+                    print("no puedo identificar el tipo de figura.")
 
                 #print fixture.shape
                 #print cuerpo.position
@@ -176,13 +176,16 @@ class Fisica(object):
     def crear_cuerpo(self, definicion_de_cuerpo):
         return self.mundo.CreateBody(definicion_de_cuerpo)
 
-    def crear_suelo(self, (ancho, alto), restitucion=0):
+    def crear_suelo(self, xxx_todo_changeme, restitucion=0):
+        (ancho, alto) = xxx_todo_changeme
         self.suelo = Rectangulo(0, -alto/2, ancho, 2, dinamica=False, fisica=self, restitucion=restitucion)
 
-    def crear_techo(self, (ancho, alto), restitucion=0):
+    def crear_techo(self, xxx_todo_changeme1, restitucion=0):
+        (ancho, alto) = xxx_todo_changeme1
         self.techo = Rectangulo(0, alto/2, ancho, 2, dinamica=False, fisica=self, restitucion=restitucion)
 
-    def crear_paredes(self, (ancho, alto), restitucion=0):
+    def crear_paredes(self, xxx_todo_changeme2, restitucion=0):
+        (ancho, alto) = xxx_todo_changeme2
         self.pared_izquierda = Rectangulo(-ancho/2, 0, 2, alto, dinamica=False, fisica=self, restitucion=restitucion)
         self.pared_derecha = Rectangulo(ancho/2, 0, 2, alto, dinamica=False, fisica=self, restitucion=restitucion)
 

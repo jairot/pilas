@@ -93,8 +93,8 @@ class CanvasWidget(QGLWidget):
                     if not actor.esta_fuera_de_la_pantalla():
                         actor.dibujar(self.painter)
                 except Exception:
-                    print traceback.format_exc()
-                    print sys.exc_info()[0]
+                    print(traceback.format_exc())
+                    print(sys.exc_info()[0])
                     actor.eliminar()
 
                 self.depurador.dibuja_al_actor(self.motor, self.painter, actor)
@@ -111,8 +111,8 @@ class CanvasWidget(QGLWidget):
         try:
             self._realizar_actualizacion_logica()
         except Exception:
-            print traceback.format_exc()
-            print sys.exc_info()[0]
+            print(traceback.format_exc())
+            print(sys.exc_info()[0])
 
         self.update()
 
@@ -133,8 +133,8 @@ class CanvasWidget(QGLWidget):
                 actor.pre_actualizar()
                 actor.actualizar()
         except Exception:
-            print traceback.format_exc()
-            print sys.exc_info()[0]
+            print(traceback.format_exc())
+            print(sys.exc_info()[0])
 
     def mouseMoveEvent(self, e):
         escala = self.escala
@@ -246,7 +246,7 @@ class CanvasWidget(QGLWidget):
             QtCore.Qt.Key_Z: simbolos.z,
         }
 
-        if teclas.has_key(tecla_qt):
+        if tecla_qt in teclas:
             return teclas[tecla_qt]
         else:
             return tecla_qt
@@ -358,10 +358,10 @@ class Imagen(object):
 
     def cargar_jpeg(self, ruta):
         from PIL import Image
-        import StringIO
+        import io
 
         pilImage = Image.open(ruta)
-        stringIO = StringIO.StringIO()
+        stringIO = io.StringIO()
         pilImage.save(stringIO, format="png")
 
         pixmapImage = QtGui.QPixmap()
@@ -819,7 +819,7 @@ class Motor(object):
             try:
                 import gst
             except ImportError:
-                print "Nota: El sistema de audio gstreamer no está disponible, usando phonon en su lugar."
+                print("Nota: El sistema de audio gstreamer no está disponible, usando phonon en su lugar.")
                 audio = 'phonon'
 
         if audio == 'deshabilitado':

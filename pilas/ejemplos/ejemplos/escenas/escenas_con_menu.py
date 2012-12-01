@@ -38,7 +38,7 @@ class EscenaDeJuego(pilas.escena.Base):
         pilas.eventos.pulsa_tecla.conectar(self.cuando_pulsa_tecla)
 
     def cuando_pulsa_tecla(self, evento):
-        if evento.texto == u'q':
+        if evento.texto == 'q':
             pilas.cambiar_escena(EscenaDeMenu())
 	
 # Carga la nueva escena

@@ -3,24 +3,24 @@ import sys
 
 try:
     from PyQt4 import QtCore, QtGui
-    from interprete_base import Ui_InterpreteDialog
+    from .interprete_base import Ui_InterpreteDialog
 except:
-    print "ERROR: No se encuentra pyqt"
+    print("ERROR: No se encuentra pyqt")
     Ui_InterpreteDialog = object
     pass
 
 import pilas
-import utils
+from . import utils
 
 try:
     sys.path.append(utils.obtener_ruta_al_recurso('../lanas'))
     import lanas
-except ImportError, e:
-    print e
+except ImportError as e:
+    print(e)
 
 import os
 
-if os.environ.has_key('lanas'):
+if 'lanas' in os.environ:
     del os.environ['lanas']
 
 class VentanaInterprete(Ui_InterpreteDialog):
