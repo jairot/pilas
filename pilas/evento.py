@@ -12,7 +12,6 @@
 #
 
 import weakref
-import new
 import inspect
 import pilas
 
@@ -134,7 +133,7 @@ class ProxyMetodo(object):
     def __init__(self, cb, id):
         try:
             try:
-                self.inst = weakref.ref(cb.__self__)
+                self.inst = weakref.proxy(cb.__self__)
             except TypeError:
                 self.inst = None
             self.func = cb.__func__
@@ -156,9 +155,9 @@ class ProxyMetodo(object):
         if self.inst is not None and self.inst() is None:
             raise ReferenceError("El metodo ha dejado de existir")
         elif self.inst is not None:
-            mtd = new.instancemethod(self.func, self.inst(), self.klass)
-        else:
-            mtd = self.func
+            #mtd = new.instancemethod(self.func, self.inst(), self.klass)
+            #mtd = self.func
+            mtd = getattr(self.inst, self.func)
 
         return mtd(AttrDict(evento))
 
