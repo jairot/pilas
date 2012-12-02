@@ -12,7 +12,8 @@
 #
 
 import weakref
-import new
+#import new
+import types
 import inspect
 import pilas
 
@@ -156,7 +157,8 @@ class ProxyMetodo(object):
         if self.inst is not None and self.inst() is None:
             raise ReferenceError("El metodo ha dejado de existir")
         elif self.inst is not None:
-            mtd = new.instancemethod(self.func, self.inst(), self.klass)
+            #mtd = new.instancemethod(self.func, self.inst(), self.klass)
+            mtd = types.MethodType(self.func, self.inst(), self.klass)
         else:
             mtd = self.func
 
