@@ -14,7 +14,7 @@ class Escena(pilas.escena.Base):
 
     def iniciar(self):
         self.pingu = pilas.actores.Pingu(y=-200)
-        self.lluvia = Lluvia(velocidad_viento=0)
+        self.lluvia = Lluvia(velocidad_viento=1)
         pilas.fondos.Tarde()
 
     def actualizar_escena(self, evento):

@@ -8,13 +8,13 @@ class Gota(object):
         self.velocidad = velocidad
         self.x = x
         self.y = y
-        self.largo = random.randrange(3,10)
+        self.largo = random.randrange(3,15)
         self.velocidad_viento = velocidad_viento
-        self.grosor = random.randint(1,2)
+        self.grosor = 1#random.randint(1,2)
 
     def actualizar(self):
-        self.y += self.velocidad
-        self.x += self.velocidad_viento
+        self.y -= self.velocidad
+        #self.x += self.velocidad_viento
 
     def dibujar(self, pizarra):
         pizarra.linea(self.x, self.y, self.x + self.velocidad_viento, self.y - self.largo, grosor=self.grosor,color=pilas.colores.blanco)
@@ -34,14 +34,15 @@ class Lluvia(object):
 
     def actualizar(self):
         self.pizarra.limpiar()
-        if random.randint(1,6) == 5:
-            if len(self.gotas) < 200:
-                self.crear_gotas(cantidad=10)
 
         for gota in self.gotas:
-            gota.y -= gota.velocidad
+            gota.actualizar()
             gota.dibujar(self.pizarra)
             if (gota.y < -200):
                 self.gotas.remove(gota)
+
+        if random.randint(1,6) == 5:
+            if len(self.gotas) < 200:
+                self.crear_gotas(cantidad=10)
 
 
